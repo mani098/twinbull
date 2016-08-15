@@ -3,13 +3,14 @@ import zipfile
 import json
 from BeautifulSoup import BeautifulSoup
 
+
 class Nse(object):
 
     def __init__(self, trade_date):
         self.trade_date = trade_date
         self.trade_date=self.trade_date.split('-')
 
-    def get_data(self):
+    def data(self):
         date_dict = {'01': 'JAN', '02': 'FEB', '03': 'MAR', '04': 'APR',
                      '05': 'MAY', '06': 'JUN', '07': 'JUL', '08': 'AUG',
                      '09': 'SEP', '10': 'OCT', '11': 'NOV', '12': 'DEC'}
@@ -55,14 +56,15 @@ class Nse(object):
 
         return stock_list
 
-    def deliverables(self, symbol):
+    @classmethod
+    def deliverables(cls, symbol):
 
         r = requests.get("https://nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=%s" %symbol)
         soup = BeautifulSoup(r.text)
         json_data = json.loads(soup.find(id='responseDiv').text)
 
         stock_deliverables = json_data['data'][0]['deliveryToTradedQuantity']
-        return stock_deliverables
+        return int(stock_deliverables)
 
 
 

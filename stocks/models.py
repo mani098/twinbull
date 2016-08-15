@@ -18,7 +18,7 @@ class StockHistory(models.Model):
     high = models.FloatField(verbose_name="High price")
     low = models.FloatField(verbose_name="Low price")
     close = models.FloatField(verbose_name="Low price")
-    prev_close = models.FloatField(verbose_name="Previous Close value")
+    prev_close = models.FloatField(verbose_name="Previous Close price")
     total_traded_qty = models.IntegerField(verbose_name="Total Traded quantity")
     total_traded_value = models.FloatField(verbose_name="Total Traded value")
     total_trades = models.IntegerField(verbose_name="Total Trades")
@@ -29,8 +29,8 @@ class StockHistory(models.Model):
 
 class StockProcessed(models.Model):
     stock_history = models.ForeignKey(StockHistory)
-    created_at = models.DateField()
-    deliverables = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    deliverables = models.FloatField(null=True, blank=True)
     watch_list = models.BooleanField(default=False)
 
     def __str__(self):
