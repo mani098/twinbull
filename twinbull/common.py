@@ -101,3 +101,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+BHAV_COPY_URL = 'https://www.nseindia.com/content/historical/EQUITIES/%s/%s/cm%s%s%sbhav.csv.zip'
+
+DELIVERABLES_URL = 'https://nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=%s'
+
+BHAV_LOCAL_PATH = '/tmp/bhav.csv.zip'
