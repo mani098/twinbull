@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>TWINBULL</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static '/js/app.js' %}"></script>
+
+
+    <title>Twinbull</title>
 </head>
 <body>
     <div class="container">
@@ -14,17 +19,16 @@
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">TWINBULL</a>
+                    <a class="navbar-brand" href="/">TWINBULL</a>
                 </div>
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#">Page 1</a></li>
-                    <li><a href="#">Page 2</a></li>
-                    <li><a href="#">Page 3</a></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    <li><a href="/add">Search</a></li>
                 </ul>
             </div>
         </nav>
         <div class="row">
+            <div class="col-sm-2"></div>
             <div class="col-sm-8">
 
 
@@ -38,23 +42,26 @@
                         </tr>
                     </thead>
                     <tbody>
+                    <script></script>
+                    {% for i in mess %}
                         <tr>
-                            <td>SBIN</td>
+                            <td>{{ i.stock }}</td>
                             <td>5 days</td>
-                            <td><font size="4">25</font><br/>&emsp;<span class="glyphicon glyphicon-arrow-up" style="color:green"></span>+0.35</td>
+                            <!--<td><font size="4"><script>document.write(httpGet("{{i.stock}}"));</script></font><br/>-->
+                            <td><font size="4"></font><br/>
+
+                                 &emsp;<span class="glyphicon glyphicon-arrow-up" style="color:green"></span></td>
                             <td><font size="4">-5</font><br/>&emsp;<span class="glyphicon glyphicon-arrow-down" style="color:red"></span>6%</td>
 
                         </tr>
-                        <tr>
-                            <td>karthigeyanmanikandan</td>
-                            <td>5</td>
-                            <td>20</td>
-                            <td>5</td>
-                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+    <script>var as = posthttp("SBIN");
+    document.write(as.l);
+    </script>
 </body>
 </html>
