@@ -25,39 +25,44 @@
         </nav>
         <div>
             <form method="post" class="form-inline" style="text-align: center;">
-            {% csrf_token %}
-            <input name="trade-date" type="date" class="form-control"/>
-            <input type="submit" value="Search" name="clickedbutton" class="form-control"/>
-        </form>
+                {% csrf_token %}
+                <input name="trade-date" type="date" class="form-control"/>
+                <input type="submit" value="Search" name="Button_clicked" class="form-control"/>
+            </form>
         </div>
 
         <div class="row" style="margin-top: 20px;">
             <div class="col-sm-2"></div>
             <div class="col-sm-6">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Symbol</th>
-                            <th>Trade Date</th>
-                            <th>Open</th>
-                            <th>Close</th>
-                            <th>Change</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for i in stocks %}
-                        <tr>
-                            <td>{{ i.stock }}</td>
-                            <td>{{ i.trade_date }}</td>
-                            <td>{{ i.open }}</td>
-                            <td>{{ i.close }}</td>
-                            <td>{{ i.change }}</td>
-                        </tr>
-                    {% empty %}
-                        <h3>Sorry, No data available</h3>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                <form method="post">
+                    {% csrf_token %}
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><input type="submit" value="add_to_watchlist" name="Button_clicked"></th>
+                                <th>Symbol</th>
+                                <th>Trade Date</th>
+                                <th>Open</th>
+                                <th>Close</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in stocks %}
+                            <tr>
+                                <td><input type="checkbox" name="watch_list" value={{ i.id }}></td>
+                                <td>{{ i.stock }}</td>
+                                <td>{{ i.trade_date }}</td>
+                                <td>{{ i.open }}</td>
+                                <td>{{ i.close }}</td>
+                                <td>{{ i.change }}</td>
+                            </tr>
+                        {% empty %}
+                            <h3>Sorry, No data available</h3>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
             </div>
         </div>
     </div>
