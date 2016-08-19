@@ -13,15 +13,6 @@ def index(request):
 
 def stock_history_view(request):
     watch_list_template = 'stocks/history.html'
-    if request.POST:
-        date_field = request.POST.get('trade-date')
-        stocks = StockHistory.objects.filter(watch_list=False, trade_date=date_field).annotate(change=F('close') - F('open'))
-        return render(request, watch_list_template, {'stocks': stocks})
-    else:
-        return render(request, watch_list_template)
-
-def stock_history_view(request):
-    watch_list_template = 'stocks/history.html'
     if request.method == 'POST':
         if request.POST['Button_clicked'] == 'Search':
             date_field = request.POST.get('trade-date')
