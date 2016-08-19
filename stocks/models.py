@@ -1,6 +1,6 @@
 from django.db import models
 from utils.nse_bhav import Nse
-from datetime import date
+from datetime import date, timedelta
 
 
 class Stock(models.Model):
@@ -16,17 +16,17 @@ class StockHistoryManager(models.Manager):
 
     def update_stocks(self):
 
-        today_stocks = Nse(date.today()).data()
+        today_stocks = Nse(date.today()- timedelta(1)).data()
         print today_stocks
         for stock in today_stocks:
             stock_instance, created = Stock.objects.get_or_create(symbol=stock['SYMBOL'], isin=stock['ISIN'])
 
             self.model.objects.get_or_create(stock=stock_instance,
-                                            open=stock['OPEN'], high=stock['HIGH'], low=stock['LOW'],
-                                            close=stock['CLOSE'], last=stock['LAST'], prev_close=stock['PREVCLOSE'],
-                                              total_traded_qty=stock['TOTTRDQTY'], total_traded_value=stock['TOTTRDVAL'],
-                                              trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES'],
-                                              deliverables=stock['DELIVERABLES'])
+                                             open=stock['OPEN'], high=stock['HIGH'], low=stock['LOW'],
+                                             close=stock['CLOSE'], last=stock['LAST'], prev_close=stock['PREVCLOSE'],
+                                             total_traded_qty=stock['TOTTRDQTY'], total_traded_value=stock['TOTTRDVAL'],
+                                             trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES'],
+                                             deliverables=stock['DELIVERABLES'])
 
 
 

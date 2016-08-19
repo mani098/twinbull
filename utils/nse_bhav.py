@@ -1,6 +1,7 @@
 import json
 import zipfile
 from datetime import datetime
+import time
 
 import requests
 from BeautifulSoup import BeautifulSoup
@@ -44,7 +45,7 @@ class Nse(object):
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             stocks = ifile.readlines()
-            for stock in stocks:
+            for i, stock in enumerate(stocks):
                 stock_data = stock.split(',')
                 if stock_data[1] == 'EQ':
                     trade_date = datetime.strptime(stock_data[10], '%d-%b-%Y').date()
@@ -60,18 +61,17 @@ class Nse(object):
                                   'TRADEDDATE':  trade_date,
                                   'TOTALTRADES': int(stock_data[11]),
                                   'ISIN':        stock_data[12]}
+                    # if i % 10 == 0:
+                    #     time.sleep(10)
                     filtered_stock = self.filter_stock(stock=stock_hash)
                     if filtered_stock:
                         stock_list.append(filtered_stock)
-
         return stock_list
 
     def deliverables(self, symbol):
 
         r = requests.get(DELIVERABLES_URL % symbol)
         soup = BeautifulSoup(r.text)
-        print symbol
-        print soup.find(id='responseDiv').text
         json_data = json.loads(soup.find(id='responseDiv').text)
 
         stock_deliverables = json_data['data'][0]['deliveryToTradedQuantity']
