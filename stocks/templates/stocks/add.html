@@ -11,9 +11,9 @@
 <body>
     <div class="container">
 
-        <nav class="navbar navbar-inverse" style="background:aqua">
+        <nav class="navbar navbar-inverse" >
             <div class="container-fluid">
-                <div class="navbar-header" style="background:aqua">
+                <div class="navbar-header" >
                     <a class="navbar-brand" href="/">TWINBULL</a>
                 </div>
                 <ul class="nav navbar-nav">
@@ -25,32 +25,36 @@
         </nav>
         <form method = "post">{% csrf_token %}
             <input name="dt" type="date"/>
-            <input type="submit" value="Search" name="clickedbutton"/><br><br>
+            <input type="submit" value="Search" name="Button_clicked"/><br><br>
         </form>
         <div class="row">
             <div class="col-sm-3">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Symbol</th>
-                            <th>Trade_date</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% if mess and mess == "No data is available" %}
-                        <h2>{{ mess }}</h2>
-                    {% elif mess %}
-                        {% for i in mess %}
+                <form method = "post">{% csrf_token %}
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>{{ i.stock }}</td>
-                                <td>{{ i.trade_date }}</td>
-                            </tr>
-                        {% endfor %}
+                                <th><input type="submit" value="add_to_watchlist" name="Button_clicked"></th>
+                                <th>Symbol</th>
+                                <th>Trade_date</th>
 
-                    {% endif %}
-                    </tbody>
-                </table>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if mess and mess == "No data is available" %}
+                                <h2>{{ mess }}</h2>
+                            {% elif mess %}
+                                {% for i in mess %}
+                                <tr>
+                                    <td><input type="checkbox" name="watch_list" value={{ i.id }}></td>
+                                    <td>{{ i.stock }}</td>
+                                    <td>{{ i.trade_date }}</td>
+                                </tr>
+                            {% endfor %}
+
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </form>
             </div>
         </div>
     </div>

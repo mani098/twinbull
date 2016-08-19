@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
+    <!--{% load static %}-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="{% static '/js/app.js' %}"></script>
+    <!--<script src="{% static '/js/app.js' %}"></script>-->
 
 
     <title>Twinbull</title>
@@ -43,10 +43,10 @@
                     </thead>
                     <tbody>
                     <script></script>
-                    {% for i in mess %}
+                    {% for i in message %}
                         <tr>
                             <td>{{ i.stock }}</td>
-                            <td>5 days</td>
+                            <td>{{ i.trade_date }}</td>
                             <!--<td><font size="4"><script>document.write(httpGet("{{i.stock}}"));</script></font><br/>-->
                             <td><font size="4"></font><br/>
 
@@ -60,8 +60,5 @@
             </div>
         </div>
     </div>
-    <script>var as = posthttp("SBIN");
-    document.write(as.l);
-    </script>
 </body>
 </html>
