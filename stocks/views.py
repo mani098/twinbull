@@ -16,7 +16,7 @@ def stock_history_view(request):
     if request.method == 'POST':
         if request.POST['Button_clicked'] == 'Search':
             date_field = request.POST.get('trade-date')
-            stocks = StockHistory.objects.filter(watch_list=False, trade_date=date_field).annotate(
+            stocks = StockHistory.objects.filter(trade_date=date_field).annotate(
                 change=F('close') - F('open'))
 
             if stocks:
@@ -31,7 +31,7 @@ def stock_history_view(request):
             Stock_to_be_added.watch_list = True
             Stock_to_be_added.save()
 
-            stocks = StockHistory.objects.filter(watch_list=False, trade_date=Stock_to_be_added.trade_date).annotate(
+            stocks = StockHistory.objects.filter(trade_date=Stock_to_be_added.trade_date).annotate(
                 change=F('close') - F('open'))
 
             if stocks:
