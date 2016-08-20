@@ -2,6 +2,7 @@ import json
 import zipfile
 from datetime import datetime
 import time
+import urllib
 
 import requests
 from BeautifulSoup import BeautifulSoup
@@ -36,10 +37,10 @@ class Nse(object):
             return self._read_zip_file(BHAV_LOCAL_PATH)
         else:
             print "sorry!, no records available"
-            return 
+            return []
 
     def _read_zip_file(self, filepath):
-        stock_list = []
+        # stock_list = []
         zfile = zipfile.ZipFile(filepath)
 
         for finfo in zfile.infolist():
@@ -64,28 +65,34 @@ class Nse(object):
                     # if i % 10 == 0:
                     #     time.sleep(10)
                     filtered_stock = self.filter_stock(stock=stock_hash)
-                    if filtered_stock:
-                        stock_list.append(filtered_stock)
-        return stock_list
+                    yield filtered_stock
+                    # stock_list.append(filtered_stock)
+        # return stock_list
 
     def deliverables(self, symbol):
-
+        symbol = urllib.quote(symbol)
         r = requests.get(DELIVERABLES_URL % symbol)
         soup = BeautifulSoup(r.text)
         json_data = json.loads(soup.find(id='responseDiv').text)
-
-        stock_deliverables = json_data['data'][0]['deliveryToTradedQuantity']
+        try:
+            stock_deliverables = json_data['data'][0]['deliveryToTradedQuantity']
+        except IndexError:
+            return 0.0
         return stock_deliverables
 
     def filter_stock(self, stock):
         today_change = stock['CLOSE'] - stock['OPEN']
         prev_change = stock['CLOSE'] - stock['PREVCLOSE']
 
+        deliverables = float(self.deliverables(stock['SYMBOL']))
+        stock.update({'DELIVERABLES': deliverables, 'is_filtered': False})
+
         if 15 <= stock['CLOSE'] <= 1000 and stock['TOTTRDQTY'] >= 10000 and \
                 (11 <= today_change <= 25 or -11 >= today_change >= -25) and \
                 prev_change >= stock['PREVCLOSE']/100:
-            deliverables = float(self.deliverables(stock['SYMBOL']))
+
             if deliverables > 65:
-                stock.update({'DELIVERABLES': deliverables})
-                return stock
+                stock.update({'is_filtered': True})
+
+        return stock
 

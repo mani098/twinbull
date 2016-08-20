@@ -108,6 +108,6 @@ STATICFILES_DIRS = [
 
 BHAV_COPY_URL = 'https://www.nseindia.com/content/historical/EQUITIES/%s/%s/cm%s%s%sbhav.csv.zip'
 
-DELIVERABLES_URL = 'https://nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=%s'
+DELIVERABLES_URL = "https://nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol=%s&illiquid=0&smeFlag=0&itpFlag=0"
 
 BHAV_LOCAL_PATH = '/tmp/bhav.csv.zip'

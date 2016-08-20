@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static '/vendor/jquery.timeago.js' %}"></script>
     <script src="{% static '/js/app.js' %}"></script>
     <title>Twinbull</title>
 </head>
@@ -27,7 +28,7 @@
         <div class="row">
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
-                <table class="table table-bordered">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Symbol</th>
@@ -46,10 +47,16 @@
                                 </a>
                             </td>
                             <td>{{ i.close }}</td>
-                            <td> <div id="{{ i.stock }}-current-price"></div>
-                                 &emsp;<span class="glyphicon" id="{{ i.stock }}-today-change"></span></td>
-                            <td><span class="glyphicon glyphicon-arrow-down" style="color:red"></span>6%</td>
-                            <td>5 days</td>
+                            <td> <div class="{{ i.stock }}-current-price"></div>
+                                 &emsp; <span class="{{ i.stock }}-today-change"></span></td>
+                            <td>
+                                <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}" ></div>
+                                <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
+                            </td>
+                            <td><span class="glyphicon glyphicon-time"></span>
+                                <time class="timeago" datetime="{{ i.trade_date }}"></time>
+                                <div class="addFadeColor">({{ i.trade_date }})</div>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
