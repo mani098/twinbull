@@ -6,7 +6,7 @@ from .models import StockHistory
 def index(request):
     index_template = 'stocks/index.html'
 
-    stock_history = StockHistory.objects.filter(watch_list=True)
+    stock_history = StockHistory.objects.filter(watch_list=True).select_related('stock')
 
     return render(request, index_template, {'stocks': stock_history})
 
@@ -17,7 +17,7 @@ def stock_history_view(request):
         if request.POST['Button_clicked'] == 'Search':
             date_field = request.POST.get('trade-date')
             stocks = StockHistory.objects.filter(trade_date=date_field, is_filtered=True).annotate(
-                change=F('close') - F('open'))
+                change=F('close') - F('open')).select_related('stock')
 
             if stocks:
                 return render(request, watch_list_template, {'stocks': stocks})
