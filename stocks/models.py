@@ -16,9 +16,9 @@ class StockHistoryManager(models.Manager):
 
     def update_stocks(self):
 
-        today_stocks = Nse(date.today()- timedelta(1)).data()
-        print today_stocks
+        today_stocks = Nse(date.today() - timedelta(1)).data()
         for stock in today_stocks:
+            print stock
             stock_instance, created = Stock.objects.get_or_create(symbol=stock['SYMBOL'], isin=stock['ISIN'])
 
             self.model.objects.get_or_create(stock=stock_instance,
@@ -26,9 +26,9 @@ class StockHistoryManager(models.Manager):
                                              close=stock['CLOSE'], last=stock['LAST'], prev_close=stock['PREVCLOSE'],
                                              total_traded_qty=stock['TOTTRDQTY'], total_traded_value=stock['TOTTRDVAL'],
                                              trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES'],
-                                             deliverables=stock['DELIVERABLES'])
-
-
+                                             deliverables=stock['DELIVERABLES'], is_filtered=stock['is_filtered'])
+        else:
+            return None
 
 
 class StockHistory(models.Model):
@@ -46,6 +46,7 @@ class StockHistory(models.Model):
     total_trades = models.IntegerField(verbose_name="Total Trades")
     deliverables = models.FloatField(null=True, blank=True)
     watch_list = models.BooleanField(default=False)
+    is_filtered = models.BooleanField(default=False)
 
     def __str__(self):
         return '%d - %s' % (self.id, self.stock.symbol)

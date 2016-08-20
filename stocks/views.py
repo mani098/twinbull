@@ -16,7 +16,7 @@ def stock_history_view(request):
     if request.method == 'POST':
         if request.POST['Button_clicked'] == 'Search':
             date_field = request.POST.get('trade-date')
-            stocks = StockHistory.objects.filter(trade_date=date_field).annotate(
+            stocks = StockHistory.objects.filter(trade_date=date_field, is_filtered=True).annotate(
                 change=F('close') - F('open'))
 
             if stocks:
