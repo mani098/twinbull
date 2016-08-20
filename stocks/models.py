@@ -1,6 +1,9 @@
 from django.db import models
 from utils.nse_bhav import Nse
 from datetime import date, timedelta
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Stock(models.Model):
@@ -18,7 +21,7 @@ class StockHistoryManager(models.Manager):
 
         today_stocks = Nse(date.today() - timedelta(1)).data()
         for stock in today_stocks:
-            print stock
+            logger.info(stock)
             stock_instance, created = Stock.objects.get_or_create(symbol=stock['SYMBOL'], isin=stock['ISIN'])
 
             self.model.objects.get_or_create(stock=stock_instance,
@@ -28,7 +31,8 @@ class StockHistoryManager(models.Manager):
                                              trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES'],
                                              deliverables=stock['DELIVERABLES'], is_filtered=stock['is_filtered'])
         else:
-            return None
+            logger.info("No data found on NSE")
+            return
 
 
 class StockHistory(models.Model):

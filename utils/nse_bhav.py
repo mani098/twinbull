@@ -1,8 +1,8 @@
 import json
 import zipfile
 from datetime import datetime
-import time
 import urllib
+import logging
 
 import requests
 from BeautifulSoup import BeautifulSoup
@@ -11,6 +11,8 @@ from django.conf import settings
 BHAV_COPY_URL = settings.BHAV_COPY_URL
 DELIVERABLES_URL = settings.DELIVERABLES_URL
 BHAV_LOCAL_PATH = settings.BHAV_LOCAL_PATH
+
+logger = logging.getLogger(__name__)
 
 
 class Nse(object):
@@ -62,12 +64,8 @@ class Nse(object):
                                   'TRADEDDATE':  trade_date,
                                   'TOTALTRADES': int(stock_data[11]),
                                   'ISIN':        stock_data[12]}
-                    # if i % 10 == 0:
-                    #     time.sleep(10)
                     filtered_stock = self.filter_stock(stock=stock_hash)
                     yield filtered_stock
-                    # stock_list.append(filtered_stock)
-        # return stock_list
 
     def deliverables(self, symbol):
         symbol = urllib.quote(symbol)
@@ -76,7 +74,8 @@ class Nse(object):
         json_data = json.loads(soup.find(id='responseDiv').text)
         try:
             stock_deliverables = json_data['data'][0]['deliveryToTradedQuantity']
-        except IndexError:
+        except IndexError as e:
+            logger.error(e, "\nSetting deliverables value as 0.0 for stock %s" % symbol)
             return 0.0
         return stock_deliverables
 

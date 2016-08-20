@@ -27,7 +27,6 @@ def stock_history_view(request):
         elif request.POST['Button_clicked'] == 'add_to_watchlist':
             Tobe_added = request.POST.get('watch_list')
             Stock_to_be_added = StockHistory.objects.get(id=Tobe_added)
-            print Stock_to_be_added.trade_date
             Stock_to_be_added.watch_list = True
             Stock_to_be_added.save()
 
