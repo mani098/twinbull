@@ -6,7 +6,7 @@ from .models import StockHistory
 def index(request):
     index_template = 'stocks/index.html'
 
-    stock_history = StockHistory.objects.filter(watch_list=True).select_related('stock')
+    stock_history = StockHistory.objects.filter(watch_list=True).select_related('stock').order_by('trade_date')
 
     return render(request, index_template, {'stocks': stock_history})
 
@@ -14,7 +14,8 @@ def index(request):
 def stock_history_view(request):
     watch_list_template = 'stocks/history.html'
     if request.method == 'POST':
-        if request.POST['Button_clicked'] == 'Search':
+
+        if request.POST.get('search-btn'):
             date_field = request.POST.get('trade-date')
             stocks = StockHistory.objects.filter(trade_date=date_field, is_filtered=True).annotate(
                 change=F('close') - F('open')).select_related('stock')
@@ -24,17 +25,16 @@ def stock_history_view(request):
             else:
                 return render(request, watch_list_template)
 
-        elif request.POST['Button_clicked'] == 'add_to_watchlist':
-            Tobe_added = request.POST.get('watch_list')
-            Stock_to_be_added = StockHistory.objects.get(id=Tobe_added)
-            Stock_to_be_added.watch_list = True
-            Stock_to_be_added.save()
+        elif request.POST['to_watchlist']:
+            watchlist_stocks = request.POST.getlist('watch_list')
+            stocks = StockHistory.objects.filter(id__in=watchlist_stocks)
+            stocks.update(watch_list=True)
 
-            stocks = StockHistory.objects.filter(trade_date=Stock_to_be_added.trade_date).annotate(
+            stocks_bydate = StockHistory.objects.filter(trade_date=stocks.first().trade_date, is_filtered=True).annotate(
                 change=F('close') - F('open'))
 
             if stocks:
-                return render(request, watch_list_template, {'stocks': stocks})
+                return render(request, watch_list_template, {'stocks': stocks_bydate})
             else:
                 return render(request, watch_list_template)
 
