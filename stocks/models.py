@@ -17,9 +17,9 @@ class Stock(models.Model):
 
 class StockHistoryManager(models.Manager):
 
-    def update_stocks(self):
+    def update_stocks(self, by_trade_date=date.today()):
 
-        today_stocks = Nse(date.today() - timedelta(1)).data()
+        today_stocks = Nse(by_trade_date).data()
         for stock in today_stocks:
             logger.info(stock)
             stock_instance, created = Stock.objects.get_or_create(symbol=stock['SYMBOL'], isin=stock['ISIN'])
