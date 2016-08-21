@@ -7,22 +7,27 @@ function updateStockPrice() {
 
     var google_finance_url = "http://finance.google.com/finance/info?client=ig&q=" + symbols;
 
-    $.get(google_finance_url, function(data, status){
-        var stock_data = JSON.parse(data.slice(3));
-        $.each(stock_data, function (index, value) {
-            $("." + value.t + '-current-price').text(value.l);
-            var todayChangeSpan = $('.' + value.t + '-today-change'),
-                todayChangePrice = parseFloat(value.c);
-            todayChangeSpan.text(todayChangePrice);
-            changePriceColor(todayChangePrice, todayChangeSpan);
-
-            var overallGainDiv = $("." + value.t + '-overall-gain');
-            var overallGainPrice = overallGainDiv.attr('data-close') - (value.l);
-            var overallGainPercent = overallGainPrice/ (overallGainDiv.attr('data-close')/100);
-            $('.' + value.t + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + ' %)');
-            overallGainDiv.text(overallGainPrice.toFixed(2));
-            changePriceColor(overallGainPrice, overallGainDiv);
-        })
+    $.ajax({
+        crossDomain: true,
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        url: google_finance_url,
+        dataType: "jsonp",
+        success: function (data) {
+            $.each(data, function (index, value) {
+                $("." + value.t + '-current-price').text(value.l);
+                var todayChangeSpan = $('.' + value.t + '-today-change'),
+                    todayChangePrice = parseFloat(value.c);
+                todayChangeSpan.text(todayChangePrice);
+                changePriceColor(todayChangePrice, todayChangeSpan);
+                var overallGainDiv = $("." + value.t + '-overall-gain');
+                var overallGainPrice = overallGainDiv.attr('data-close') - (value.l);
+                var overallGainPercent = overallGainPrice/ (overallGainDiv.attr('data-close')/100);
+                $('.' + value.t + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + ' %)');
+                overallGainDiv.text(overallGainPrice.toFixed(2));
+                changePriceColor(overallGainPrice, overallGainDiv);
+            });
+        }
     });
 }
 
