@@ -22,7 +22,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/pi/code/logs/twinbull.log',
+            'filename': '/home/ubuntu/server/logs/twinbull_app.log',
             'formatter': 'verbose'
         },
         'console': {
