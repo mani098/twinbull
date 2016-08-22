@@ -1,7 +1,9 @@
-from django.db import models
-from utils.nse_bhav import Nse
-from datetime import date, timedelta
 import logging
+from datetime import date
+
+from django.db import models
+
+from utils.nse_bhav import Nse
 
 logger = logging.getLogger(__name__)
 
@@ -18,21 +20,29 @@ class Stock(models.Model):
 class StockHistoryManager(models.Manager):
 
     def update_stocks(self, by_trade_date=date.today()):
-
+        symbols_instance = Stock.objects.all().values('id', 'symbol')
+        symbols = {stock['symbol']: stock['id'] for stock in symbols_instance}
         today_stocks = Nse(by_trade_date).data()
-        for stock in today_stocks:
-            logger.info(stock)
-            stock_instance, created = Stock.objects.get_or_create(symbol=stock['SYMBOL'], isin=stock['ISIN'])
 
-            self.model.objects.get_or_create(stock=stock_instance,
+        stocks_history = []
+
+        for stock in today_stocks:
+            stock_id = symbols.get(stock['SYMBOL'])
+            if not stock_id:
+                stock_instance = Stock.objects.create(symbol=stock['SYMBOL'], isin=stock['ISIN'])
+                stock_id = stock_instance.id
+
+            stocks_history.append(self.model(stock_id=stock_id,
                                              open=stock['OPEN'], high=stock['HIGH'], low=stock['LOW'],
                                              close=stock['CLOSE'], last=stock['LAST'], prev_close=stock['PREVCLOSE'],
                                              total_traded_qty=stock['TOTTRDQTY'], total_traded_value=stock['TOTTRDVAL'],
                                              trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES'],
-                                             deliverables=stock['DELIVERABLES'], is_filtered=stock['is_filtered'])
+                                             deliverables=stock['DELIVERABLES'], is_filtered=stock['is_filtered']))
+
+        if stocks_history:
+            StockHistory.objects.bulk_create(stocks_history)
         else:
             logger.info("No data found on NSE")
-            return
 
 
 class StockHistory(models.Model):

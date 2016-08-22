@@ -19,9 +19,9 @@
                             <tr>
                                 <th>Symbol</th>
                                 <th>Trade Date</th>
-                                <th>Open</th>
-                                <th>Close</th>
-                                <th>Change</th>
+                                <th>Avg. Price</th>
+                                <th>LTP</th>
+                                <th>Overall Gain</th>
                                 <th>Watch-list</th>
                             </tr>
                         </thead>
@@ -33,9 +33,13 @@
                                     </a>
                                 </td>
                                 <td>{{ i.trade_date }}</td>
-                                <td>{{ i.open }}</td>
                                 <td>{{ i.close }}</td>
-                                <td>{{ i.change }}</td>
+                                <td> <div class="{{ i.stock }}-current-price"></div>
+                                        <span class="{{ i.stock }}-today-change today-change"></span></td>
+                                <td>
+                                    <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}" ></div>
+                                    <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
+                                </td>
                                 <td><input type="checkbox" name="watch_list" value="{{ i.id }}"
                                            {% if i.watch_list %}
                                             checked=true
