@@ -1,9 +1,19 @@
-.addFadeColor {
+.addFadeColor, .addFadeColor > a {
     color: #666666;
     padding-left: 15px;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .today-change{
-    font-size: 10px;
+    font-size: 14px;
+}
+
+.symbol {
+    cursor: pointer;
+}
+
+
+.modal-dialog {
+    max-height: 800px;
+    width: 1000px;
 }

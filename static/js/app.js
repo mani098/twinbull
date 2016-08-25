@@ -1,8 +1,8 @@
 function updateStockPrice() {
     var symbols = '';
 
-    $.each($('a.symbol'), function (index, value) {
-        symbols += $(value).attr('data-symbol') + ',';
+    $.each($('div.symbol'), function (index, value) {
+        symbols += 'NSE:' + $(value).attr('data-symbol') + ',';
     });
 
     if (!symbols){
@@ -50,7 +50,11 @@ $(function () {
     // Update the current stock price after DOM loaded
     updateStockPrice();
     $("time.timeago").timeago();
-    $('[data-toggle="tooltip"]').tooltip();
+
+    $('.symbol').click(function (e) {
+        loadDeliverables(this.dataset.symbol, this.dataset.tradedate);
+    })
+
 });
 
 var today_date_time = new Date();
@@ -59,79 +63,69 @@ var present_time = today_date_time.getHours();
 
 if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_time > 9))){
     setInterval(function() {
-    updateStockPrice();
-}, 5000);
-
+        updateStockPrice();
+    }, 5000);
 }
 
-else{
+function loadDeliverables(symbol, from_date, to_date) {
+     $("#deliveryModal .modal-title").html(symbol);
+    $.get('/api/deliverables/', {symbol: symbol, from_date: from_date, to_date:to_date}, function (data) {
+        var x = [], y_deliverables = [], y_price = [], y_traded_qty = [];
+        $.each(data['data'], function (index, value) {
+            x.push(value.trade_date);
+            y_deliverables.push(value.deliverables);
+            y_price.push(value.close);
+            // y_traded_qty.push(value.total_traded_qty);
+        });
+        var traceDeliverables =
+            {
+                x: x,
+                y: y_deliverables,
+                name: 'Deliverables',
+                type: 'scatter'
+            };
+        var tracePrice =
+        {
+                x: x,
+                y: y_price,
+                yaxis: 'y2',
+                name: 'Price',
+                type: 'scatter'
+            };
+        // var traceQty =
+        //     {
+        //         x: x,
+        //         y: y_traded_qty,
+        //         yaxis: 'y3',
+        //         name: 'Tot Traded Qty',
+        //         type: 'scatter'
+        //     };
+        var plotlyData = [traceDeliverables, tracePrice];
+        var layout = {
+            width: 900,
+            yaxis: {title: 'Deliverables',
+                    titlefont: {color: '#1f77b4'},
+                    tickfont: {color: '#1f77b4'}
+            },
+            yaxis2: {
+                title: 'Price',
+                titlefont: {color: 'rgb(148, 103, 189)'},
+                tickfont: {color: 'rgb(148, 103, 189)'},
+                overlaying: 'y',
+                side: 'right' //,
+                // position: 0.09
+            }//,
+            // yaxis3: {
+            //     title: 'Tot Traded Qty',
+            //     titlefont: {color: '#d62728'},
+            //     tickfont: {color: '#d62728'},
+            //     anchor: 'x',
+            //     overlaying: 'y',
+            //     side: 'right'
+            // }
+        };
+        // debugger;
 
+        Plotly.newPlot("plotly-deliverables", plotlyData, layout);
+    });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function posthttp(symbol){
-//     var myVar = setInterval(function(){httpGet(symbol)}, 5000);
-//
-//     return myVar;
-// }
-//
-//
-// function httpGet(symbol)
-//         {
-//             var xmlHttp = new XMLHttpRequest();
-//             var Url = "http://finance.google.com/finance/info?client=ig&q="+ symbol;
-//             xmlHttp.open("GET", Url, false);
-//             xmlHttp.send(null);
-//             var myArr = xmlHttp.responseText;
-//
-//              var txt = myArr.replace("// [","");
-//              var asd = /]/g;
-//              var qwerq = txt.replace(asd,"");
-//
-//
-//              var obj = JSON.parse(qwerq);
-//            //  document.write(obj);
-//              return obj;
-// //             return obj;
-//
-//         }
-//
-// function karthi(){
-//         document.write("sdfasdfsadgdfgfg");
-//         //alert("asdfdsf");
-// }
-// //function posthttp(symbol){
-// //
-// //       var myVar = setInterval(function(){ httpGet(symbol) }, 3000);
-// //       document.write(myVar);
-// //        return myVar;
-// //        }
-
-// $(function() {
-//     console.log( "ready!" );
-// });

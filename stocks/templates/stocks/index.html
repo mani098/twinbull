@@ -18,9 +18,10 @@
                     {% for i in stocks %}
                         <tr>
                             <td>
-                                <a class="symbol" href="https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol={{ i.stock }}"
-                                   target="_blank" data-symbol="{{ i.stock }}">{{ i.stock }}
-                                </a>
+                                <div class="symbol" data-toggle="modal" data-target="#deliveryModal" data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">{{ i.stock }}
+                                </div>
+                                <div class="addFadeColor"><a href="https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol={{ i.stock }}"
+                                   target="_blank" ><span class="glyphicon glyphicon-link"></span> nse</a></div>
                             </td>
                             <td>{{ i.close }}</td>
                             <td> <div class="{{ i.stock }}-current-price"></div>

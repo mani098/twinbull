@@ -33,9 +33,3 @@ def stock_history_view(request):
             ctx['stocks'] = stocks_bydate
 
     return render(request, watch_list_template, ctx)
-
-
-def stocks_deliverables(request):
-    deliverables_template = 'stocks/deliverables.html'
-
-    return render(request, deliverables_template)
