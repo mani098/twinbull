@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class Nse(object):
-
     def __init__(self, trade_date):
         self.trade_date = trade_date
 
@@ -69,19 +68,19 @@ class Nse(object):
                 stock_data = stock.split(',')
                 if stock_data[1] == 'EQ':
                     trade_date = datetime.strptime(stock_data[10], '%d-%b-%Y').date()
-                    stock_hash = {'SYMBOL':      stock_data[0],
-                                  'OPEN':        float(stock_data[2]),
-                                  'HIGH':        float(stock_data[3]),
-                                  'LOW':         float(stock_data[4]),
-                                  'CLOSE':       float(stock_data[5]),
-                                  'LAST':        float(stock_data[6]),
-                                  'PREVCLOSE':   float(stock_data[7]),
-                                  'TOTTRDQTY':   int(stock_data[8]),
-                                  'TOTTRDVAL':   float(stock_data[9]),
-                                  'TRADEDDATE':  trade_date,
+                    stock_hash = {'SYMBOL': stock_data[0],
+                                  'OPEN': float(stock_data[2]),
+                                  'HIGH': float(stock_data[3]),
+                                  'LOW': float(stock_data[4]),
+                                  'CLOSE': float(stock_data[5]),
+                                  'LAST': float(stock_data[6]),
+                                  'PREVCLOSE': float(stock_data[7]),
+                                  'TOTTRDQTY': int(stock_data[8]),
+                                  'TOTTRDVAL': float(stock_data[9]),
+                                  'TRADEDDATE': trade_date,
                                   'TOTALTRADES': int(stock_data[11]),
                                   'DELIVERABLES': float(deliverables_data[stock_data[0]]),
-                                  'ISIN':        stock_data[12]}
+                                  'ISIN': stock_data[12]}
                     filtered_stock = self.filter_stock(stock=stock_hash)
                     yield filtered_stock
 
@@ -91,11 +90,10 @@ class Nse(object):
 
         if 15 <= stock['CLOSE'] <= 1000 and stock['TOTTRDQTY'] >= 10000 and \
                 (11 <= today_change <= 25 or -11 >= today_change >= -25) and \
-                prev_change >= stock['PREVCLOSE']/100 and stock['DELIVERABLES'] > 65:
+                        prev_change >= stock['PREVCLOSE'] / 100 and stock['DELIVERABLES'] > 65:
 
             stock.update({'is_filtered': True})
         else:
             stock.update({'is_filtered': False})
 
         return stock
-
