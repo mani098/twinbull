@@ -36,7 +36,11 @@
                                         <a href="https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol={{ i.stock }}"
                                    target="_blank" ><span class="glyphicon glyphicon-link"></span> nse</a></div>
                                 </td>
-                                <td>{{ i.trade_date }}</td>
+                                <td>{{ i.trade_date }}
+                                    <div>
+                                        <time class="timeago addFadeColor" datetime="{{ i.trade_date }}"></time>
+                                    </div>
+                                </td>
                                 <td>{{ i.close }}</td>
                                 <td> <div class="{{ i.stock }}-current-price"></div>
                                         <span class="{{ i.stock }}-today-change today-change"></span></td>

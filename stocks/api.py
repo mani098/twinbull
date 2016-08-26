@@ -11,6 +11,6 @@ def deliverableApi(request):
     if not isinstance(to_date, date):
         to_date = parser.parse(to_date).date()
     stocks_data = list(StockHistory.objects.filter(stock__symbol=symbol, trade_date__range=[from_date, to_date]).values(
-        'trade_date', 'deliverables', 'close', 'total_traded_qty'))
+        'trade_date', 'deliverables', 'close', 'total_traded_qty').order_by('trade_date'))
     response_data = {'data': stocks_data}
     return JsonResponse(response_data)

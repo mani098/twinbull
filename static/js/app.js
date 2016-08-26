@@ -1,13 +1,11 @@
 function updateStockPrice() {
     var symbols = '';
-
     $.each($('div.symbol'), function (index, value) {
         symbols += 'NSE:' + $(value).attr('data-symbol') + ',';
     });
 
-    if (!symbols){
-        return
-    }
+    if (!symbols) return;
+
     var google_finance_url = "http://finance.google.com/finance/info?client=ig&q=" + symbols;
 
     $.ajax({
@@ -69,13 +67,15 @@ if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_t
 
 function loadDeliverables(symbol, from_date, to_date) {
      $("#deliveryModal .modal-title").html(symbol);
-    $.get('/api/deliverables/', {symbol: symbol, from_date: from_date, to_date:to_date}, function (data) {
-        var x = [], y_deliverables = [], y_price = [], y_traded_qty = [];
+    $.ajax({
+        url: '/api/deliverables/',
+        data: {symbol: symbol, from_date: from_date, to_date:to_date}
+    }).done(function (data) {
+        var x = [], y_deliverables = [], y_price = [];
         $.each(data['data'], function (index, value) {
             x.push(value.trade_date);
             y_deliverables.push(value.deliverables);
             y_price.push(value.close);
-            // y_traded_qty.push(value.total_traded_qty);
         });
         var traceDeliverables =
             {
@@ -92,14 +92,6 @@ function loadDeliverables(symbol, from_date, to_date) {
                 name: 'Price',
                 type: 'scatter'
             };
-        // var traceQty =
-        //     {
-        //         x: x,
-        //         y: y_traded_qty,
-        //         yaxis: 'y3',
-        //         name: 'Tot Traded Qty',
-        //         type: 'scatter'
-        //     };
         var plotlyData = [traceDeliverables, tracePrice];
         var layout = {
             width: 900,
@@ -113,18 +105,8 @@ function loadDeliverables(symbol, from_date, to_date) {
                 tickfont: {color: 'rgb(148, 103, 189)'},
                 overlaying: 'y',
                 side: 'right' //,
-                // position: 0.09
-            }//,
-            // yaxis3: {
-            //     title: 'Tot Traded Qty',
-            //     titlefont: {color: '#d62728'},
-            //     tickfont: {color: '#d62728'},
-            //     anchor: 'x',
-            //     overlaying: 'y',
-            //     side: 'right'
-            // }
+            }
         };
-        // debugger;
 
         Plotly.newPlot("plotly-deliverables", plotlyData, layout);
     });
