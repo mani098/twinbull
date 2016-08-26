@@ -50,6 +50,7 @@ $(function () {
     $("time.timeago").timeago();
 
     $('.symbol').click(function (e) {
+        e.preventDefault();
         loadDeliverables(this.dataset.symbol, this.dataset.tradedate);
     })
 
@@ -110,6 +111,7 @@ function loadDeliverables(symbol, from_date, to_date) {
                 }
             };
             Plotly.newPlot("plotly-deliverables", plotlyData, layout);
+            $('#deliveryModal').modal();
         }
     });
 }
