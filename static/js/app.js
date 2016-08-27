@@ -71,7 +71,7 @@ function loadDeliverables(symbol, from_date, to_date) {
     $.ajax({
         url: '/api/deliverables/',
         type: 'GET',
-        data: {symbol: symbol, from_date: from_date, to_date: to_date},
+        data: {symbol: symbol, trade_date: from_date, to_date: to_date},
         success: function (data) {
             var x = [], y_deliverables = [], y_price = [];
             $.each(data['data'], function (index, value) {
@@ -96,7 +96,8 @@ function loadDeliverables(symbol, from_date, to_date) {
             };
             var plotlyData = [traceDeliverables, tracePrice];
             var layout = {
-                width: 900,
+                width: 1100,
+                height: 600,
                 yaxis: {
                     title: 'Deliverables',
                     titlefont: {color: '#1f77b4'},

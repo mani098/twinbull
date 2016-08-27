@@ -18,7 +18,6 @@ class Stock(models.Model):
 
 
 class StockHistoryManager(models.Manager):
-
     def update_stocks(self, by_trade_date=date.today()):
         symbols_instance = Stock.objects.all().values('id', 'symbol')
         symbols = {stock['symbol']: stock['id'] for stock in symbols_instance}
@@ -66,5 +65,3 @@ class StockHistory(models.Model):
         return '%d - %s' % (self.id, self.stock.symbol)
 
     objects = StockHistoryManager()
-
-

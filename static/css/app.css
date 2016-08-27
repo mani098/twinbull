@@ -16,7 +16,14 @@ body {
     cursor: pointer;
 }
 
+
+/*Override vendor css*/
+
 .modal-dialog {
-    max-height: 800px;
-    width: 1000px;
+    max-height: 900px;
+    width: 1200px;
+}
+
+.timeago {
+    text-transform: capitalize;
 }
