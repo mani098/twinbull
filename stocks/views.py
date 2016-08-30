@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from django.db.models import F
 from django.shortcuts import render
 
@@ -7,7 +7,7 @@ from .models import StockHistory
 
 def index(request):
     index_template = 'stocks/index.html'
-    stock_history = StockHistory.objects.filter(watch_list=True).select_related('stock').order_by('trade_date')
+    stock_history = StockHistory.objects.filter(watch_list=True).select_related('stock').order_by('-trade_date')
 
     return render(request, index_template, {'stocks': stock_history})
 
@@ -17,10 +17,14 @@ def stock_history_view(request):
     ctx = {'stocks': []}
     if request.method == 'POST':
         if request.POST.get('search-btn'):
-            date_field = request.POST.get('trade-date') or date.today()
+            date_field = request.POST.get('trade-date')
             symbol = request.POST.get('stock_symbol')
             if symbol:
-                stocks = StockHistory.objects.filter(trade_date=date_field, stock__symbol=symbol.strip())
+                if not date_field:
+                    today_date = date.today()
+                    stocks = StockHistory.objects.filter(trade_date__range=[today_date - timedelta(25), today_date], stock__symbol=symbol.strip()).order_by('-trade_date')
+                else:
+                    stocks = StockHistory.objects.filter(trade_date=date_field, stock__symbol=symbol.strip())
             else:
                 stocks = StockHistory.objects.filter(trade_date=date_field, is_filtered=True).annotate(
                     change=F('close') - F('open')).select_related('stock')
