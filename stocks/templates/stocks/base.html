@@ -6,46 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="//cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static '/vendor/jquery.timeago.js' %}"></script>
-    <script src="{% static '/js/app.js' %}"></script>
     <title>Twinbull</title>
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar navbar-inverse">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/">TwinBull</a>
-                </div>
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/history">History</a></li>
-                </ul>
+<div class="container">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">TwinBull</a>
             </div>
-        </nav>
-        {% block content %}
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/history">History</a></li>
+            </ul>
+        </div>
+    </nav>
+    {% block content %}
 
-        {% endblock %}
-        <!-- Modal -->
-        <div id="deliveryModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h5 class="modal-title"></h5>
-                    </div>
-                    <div class="modal-body" id="plotly-deliverables">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+    {% endblock %}
+    <!-- Modal -->
+    <div id="deliveryModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h5 class="modal-title"></h5>
+                </div>
+                <div class="modal-body" id="plotly-deliverables">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="{% static '/vendor/jquery.timeago.js' %}"></script>
+<script src="{% static '/js/app.js' %}"></script>
 </html>

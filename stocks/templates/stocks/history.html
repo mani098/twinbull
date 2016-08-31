@@ -1,70 +1,70 @@
 {% extends 'stocks/base.html' %}
 
 {% block content %}
-    <div>
-        <form method="post" class="form-inline" style="text-align: center;">
+<div>
+    <form method="post" class="form-inline" style="text-align: center;">
+        {% csrf_token %}
+        <input name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>
+        <input name="trade-date" type="date" class="form-control"/>
+        <input type="submit" value="Search" name="search-btn" class="form-control"/>
+    </form>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-6">
+        <form method="POST">
             {% csrf_token %}
-            <input name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>
-            <input name="trade-date" type="date" class="form-control"/>
-            <input type="submit" value="Search" name="search-btn" class="form-control"/>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Trade Date</th>
+                    <th>Avg. Price</th>
+                    <th>LTP</th>
+                    <th>Overall Gain</th>
+                    <th>Watch-list</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in stocks %}
+                <tr>
+                    <td>
+                        <div class="symbol" data-target="#deliveryModal"
+                             data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">
+                            {{ i.stock }}
+                        </div>
+                        <div class="addFadeColor">
+                            <a href="https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol={{ i.stock }}"
+                               target="_blank"><span class="glyphicon glyphicon-link"></span> nse</a></div>
+                    </td>
+                    <td>{{ i.trade_date }}
+                        <div>
+                            <time class="timeago addFadeColor" datetime="{{ i.trade_date }}"></time>
+                        </div>
+                    </td>
+                    <td>{{ i.close }}</td>
+                    <td>
+                        <div class="{{ i.stock }}-current-price"></div>
+                        <span class="{{ i.stock }}-today-change today-change"></span></td>
+                    <td>
+                        <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
+                        <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
+                    </td>
+                    <td><input type="checkbox" name="watch_list" value="{{ i.id }}"
+                               {% if i.watch_list %}
+                               checked=true
+                               {% endif %}
+                    >
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="pull-right">
+                <input type="submit" value="Add to Watch-list" name="to_watchlist">
+            </div>
         </form>
     </div>
-
-    <div class="row" style="margin-top: 20px;">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-6">
-            <form method="POST">
-                {% csrf_token %}
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Symbol</th>
-                        <th>Trade Date</th>
-                        <th>Avg. Price</th>
-                        <th>LTP</th>
-                        <th>Overall Gain</th>
-                        <th>Watch-list</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for i in stocks %}
-                        <tr>
-                            <td>
-                                <div class="symbol" data-target="#deliveryModal"
-                                     data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">
-                                    {{ i.stock }}
-                                </div>
-                                <div class="addFadeColor">
-                                    <a href="https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol={{ i.stock }}"
-                                       target="_blank"><span class="glyphicon glyphicon-link"></span> nse</a></div>
-                            </td>
-                            <td>{{ i.trade_date }}
-                                <div>
-                                    <time class="timeago addFadeColor" datetime="{{ i.trade_date }}"></time>
-                                </div>
-                            </td>
-                            <td>{{ i.close }}</td>
-                            <td>
-                                <div class="{{ i.stock }}-current-price"></div>
-                                <span class="{{ i.stock }}-today-change today-change"></span></td>
-                            <td>
-                                <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
-                                <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
-                            </td>
-                            <td><input type="checkbox" name="watch_list" value="{{ i.id }}"
-                                    {% if i.watch_list %}
-                                       checked=true
-                                    {% endif %}
-                            >
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                <div class="pull-right">
-                    <input type="submit" value="Add to Watch-list" name="to_watchlist">
-                </div>
-            </form>
-        </div>
-    </div>
+</div>
 {% endblock %}

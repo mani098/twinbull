@@ -1,10 +1,9 @@
 body {
-    background-color: #d9d9d9;
+    background-color: hsl(0, 0%, 92%)
 }
 
 .addFadeColor, .addFadeColor > a {
     color: #666666;
-    padding-left: 15px;
     font-size: 11px;
 }
 
@@ -14,6 +13,16 @@ body {
 
 .symbol {
     cursor: pointer;
+}
+
+span.remove-btn {
+    margin-top: 35%;
+    color: rgb(197, 16, 16);
+    visibility: hidden;
+}
+
+tr:hover span.remove-btn{
+    visibility: visible;
 }
 
 

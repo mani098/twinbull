@@ -15,6 +15,7 @@ def index(request):
 def stock_history_view(request):
     watch_list_template = 'stocks/history.html'
     ctx = {'stocks': []}
+    stocks_qs = StockHistory.objects.filter(is_filtered=True)
     if request.method == 'POST':
         if request.POST.get('search-btn'):
             date_field = request.POST.get('trade-date')
@@ -22,11 +23,13 @@ def stock_history_view(request):
             if symbol:
                 if not date_field:
                     today_date = date.today()
-                    stocks = StockHistory.objects.filter(trade_date__range=[today_date - timedelta(25), today_date], stock__symbol=symbol.strip()).order_by('-trade_date')
+                    stocks = stocks_qs.filter(trade_date__range=[today_date - timedelta(25), today_date],
+                                              stock__symbol=symbol.strip()) \
+                        .order_by('-trade_date')
                 else:
-                    stocks = StockHistory.objects.filter(trade_date=date_field, stock__symbol=symbol.strip())
+                    stocks = stocks_qs.filter(trade_date=date_field, stock__symbol=symbol.strip())
             else:
-                stocks = StockHistory.objects.filter(trade_date=date_field, is_filtered=True).annotate(
+                stocks = stocks_qs.filter(trade_date=date_field).annotate(
                     change=F('close') - F('open')).select_related('stock')
             ctx['stocks'] = stocks
 
@@ -35,10 +38,16 @@ def stock_history_view(request):
             stocks = StockHistory.objects.filter(id__in=watchlist_stocks)
             stocks.update(watch_list=True)
 
-            stocks_bydate = StockHistory.objects.filter(trade_date=stocks.first().trade_date,
-                                                        is_filtered=True).annotate(
-                change=F('close') - F('open'))
+            stocks_bydate = stocks_qs.filter(trade_date=stocks.first().trade_date) \
+                .annotate(change=F('close') - F('open'))
 
             ctx['stocks'] = stocks_bydate
+
+    elif request.method == 'GET':
+        trade_date = stocks_qs.order_by('-trade_date').first().trade_date
+        stocks = stocks_qs.filter(trade_date=trade_date)
+        ctx['stocks'] = stocks
+
+        return render(request, watch_list_template, ctx)
 
     return render(request, watch_list_template, ctx)

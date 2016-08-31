@@ -1,5 +1,5 @@
 import logging
-from datetime import date
+from datetime import date, datetime
 
 from django.db import models
 
@@ -41,6 +41,9 @@ class StockHistoryManager(models.Manager):
         if stocks_history:
             StockHistory.objects.bulk_create(stocks_history)
         else:
+            # for cron logs
+            print "[%s] No data found on NSE" % datetime.now()
+
             logger.info("No data found on NSE")
 
 
@@ -60,6 +63,8 @@ class StockHistory(models.Model):
     deliverables = models.FloatField(null=True, blank=True)
     watch_list = models.BooleanField(default=False)
     is_filtered = models.BooleanField(default=False)
+
+    # comments = models.CharField(max_length=500)
 
     def __str__(self):
         return '%d - %s' % (self.id, self.stock.symbol)

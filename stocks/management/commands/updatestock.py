@@ -3,6 +3,5 @@ from stocks.models import StockHistory
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
         StockHistory.objects.update_stocks()
