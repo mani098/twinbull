@@ -19,10 +19,23 @@ span.remove-btn {
     margin-top: 35%;
     color: rgb(197, 16, 16);
     visibility: hidden;
+    cursor: pointer;
 }
 
 tr:hover span.remove-btn{
     visibility: visible;
+}
+span.add-btn {
+    margin-left: 30%;
+    margin-top: 13%;
+    color: hsl(192, 100%, 40%);
+    cursor: pointer;
+}
+
+span.ok-btn {
+    margin-left: 30%;
+    margin-top: 13%;
+    color: hsl(120, 60%, 35%);
 }
 
 
