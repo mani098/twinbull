@@ -12,6 +12,7 @@ class Stock(models.Model):
     symbol = models.CharField(max_length=100, verbose_name="Symbol")
     isin = models.CharField(max_length=30, verbose_name="ISIN")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Stock created at")
+    moneycontrol_link = models.TextField(verbose_name='MoneyControl.com', null=True, default=None, blank=True)
 
     def __str__(self):
         return self.symbol
@@ -63,8 +64,7 @@ class StockHistory(models.Model):
     deliverables = models.FloatField(null=True, blank=True)
     watch_list = models.BooleanField(default=False)
     is_filtered = models.BooleanField(default=False)
-
-    # comments = models.CharField(max_length=500)
+    comments = models.CharField(max_length=1000)
 
     def __str__(self):
         return '%d - %s' % (self.id, self.stock.symbol)
