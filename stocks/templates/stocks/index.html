@@ -22,8 +22,8 @@
                          data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">{{ i.stock }}
                     </div>
                     <div class="addFadeColor"><a
-                            href="https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol={{ i.stock }}"
-                            target="_blank"><span class="glyphicon glyphicon-link"></span> nse</a></div>
+                            href="{{ i.stock.moneycontrol_link }}"
+                            target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
                 </td>
                 <td>{{ i.close }}</td>
                 <td>
