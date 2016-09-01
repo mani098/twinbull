@@ -33,15 +33,15 @@ def stock_history_view(request):
                     change=F('close') - F('open')).select_related('stock')
             ctx['stocks'] = stocks
 
-        elif request.POST.get('to_watchlist'):
-            watchlist_stocks = request.POST.getlist('watch_list')
-            stocks = StockHistory.objects.filter(id__in=watchlist_stocks)
-            stocks.update(watch_list=True)
-
-            stocks_bydate = stocks_qs.filter(trade_date=stocks.first().trade_date) \
-                .annotate(change=F('close') - F('open'))
-
-            ctx['stocks'] = stocks_bydate
+        # elif request.POST.get('to_watchlist'):
+        #     watchlist_stocks = request.POST.getlist('watch_list')
+        #     stocks = StockHistory.objects.filter(id__in=watchlist_stocks)
+        #     stocks.update(watch_list=True)
+        #
+        #     stocks_bydate = stocks_qs.filter(trade_date=stocks.first().trade_date) \
+        #         .annotate(change=F('close') - F('open'))
+        #
+        #     ctx['stocks'] = stocks_bydate
 
     elif request.method == 'GET':
         trade_date = stocks_qs.order_by('-trade_date').first().trade_date
