@@ -26,3 +26,10 @@ def watchlist_remove(request):
     stock_qs = StockHistory.objects.filter(id=history_id)
     stock_qs.update(watch_list=False)
     return JsonResponse({})
+
+@csrf_exempt
+def watchlist_add(request):
+    history_id = json.loads(request.body).get('row_id')
+    stock_qs = StockHistory.objects.filter(id=history_id)
+    stock_qs.update(watch_list=True)
+    return JsonResponse({})

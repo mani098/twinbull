@@ -51,19 +51,26 @@
                         <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
                         <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
                     </td>
-                    <td><input type="checkbox" name="watch_list" value="{{ i.id }}"
-                               {% if i.watch_list %}
-                               checked=true
-                               {% endif %}
-                    >
+                    <!--<td><input type="checkbox" name="watch_list" value="{{ i.id }}"-->
+                               <!--{% if i.watch_list %}-->
+                               <!--checked=true-->
+                               <!--{% endif %}-->
+                    <!--&gt;-->
+                    <!--</td>-->
+                    <td>
+                        {% if i.watch_list %}
+                            <span class="glyphicon glyphicon-ok ok-btn"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-plus add-btn" data-row-id="{{ i.id }}"></span>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <div class="pull-right">
-                <input type="submit" value="Add to Watch-list" name="to_watchlist">
-            </div>
+            <!--<div class="pull-right">-->
+                <!--<input type="submit" value="Add to Watch-list" name="to_watchlist">-->
+            <!--</div>-->
         </form>
     </div>
 </div>

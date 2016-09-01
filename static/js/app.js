@@ -1,3 +1,18 @@
+$('.add-btn').click(function(){
+    var rowId = this.dataset.rowId;
+    this.className="glyphicon glyphicon-ok ok-btn"
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        url: '/api/watchlist/add/',
+        data: JSON.stringify({row_id: rowId})
+
+    });
+
+});
+
+
 $('.remove-btn').click(function(){
     var rowId = this.dataset.rowId;
     $(this).parents('tr').remove();
