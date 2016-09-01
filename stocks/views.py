@@ -19,7 +19,7 @@ def stock_history_view(request):
     if request.method == 'POST':
         if request.POST.get('search-btn'):
             trade_date = request.POST.get('trade-date')
-            date_field = datetime.strptime(trade_date, '%d/%m/%Y') if trade_date else None
+            date_field = datetime.strptime(trade_date, '%m/%d/%Y').date() if trade_date else None
             symbol = request.POST.get('stock_symbol')
             if symbol:
                 if not trade_date:
