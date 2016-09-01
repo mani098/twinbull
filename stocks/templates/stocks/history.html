@@ -4,8 +4,8 @@
 <div>
     <form method="post" class="form-inline" style="text-align: center;">
         {% csrf_token %}
-        <input name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>
-        <input name="trade-date" type="date" class="form-control"/>
+        <input id="symbol-tag" name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>
+        <input name="trade-date" type="text" id="datepicker" class="form-control"/>
         <input type="submit" value="Search" name="search-btn" class="form-control"/>
     </form>
 </div>

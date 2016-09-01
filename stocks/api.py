@@ -4,7 +4,7 @@ from dateutil import parser
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from stocks.models import StockHistory
+from stocks.models import StockHistory, Stock
 
 
 def deliverable_api(request):
@@ -27,9 +27,15 @@ def watchlist_remove(request):
     stock_qs.update(watch_list=False)
     return JsonResponse({})
 
+
 @csrf_exempt
 def watchlist_add(request):
     history_id = json.loads(request.body).get('row_id')
     stock_qs = StockHistory.objects.filter(id=history_id)
     stock_qs.update(watch_list=True)
     return JsonResponse({})
+
+
+def list_symbols(request):
+    symbols = list(Stock.objects.all().values_list('symbol', flat=True))
+    return JsonResponse({'symbols': symbols})

@@ -1,6 +1,28 @@
-$('.add-btn').click(function(){
+$(function () {
+    // Update the current stock price after DOM loaded
+    updateStockPrice();
+    $("time.timeago").timeago();
+
+    $('.symbol').click(function (e) {
+        e.preventDefault();
+        loadDeliverables(this.dataset.symbol, this.dataset.tradedate);
+    });
+    $("#datepicker").datepicker();
+
+    $.ajax({
+        url: '/api/symbols/',
+        type: 'GET'
+    }).done(function (responseData) {
+        $("#symbol-tag").autocomplete({
+            source: responseData.symbols
+        });
+    });
+
+});
+
+$('.add-btn').click(function () {
     var rowId = this.dataset.rowId;
-    this.className="glyphicon glyphicon-ok ok-btn"
+    this.className = "glyphicon glyphicon-ok ok-btn"
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
@@ -13,7 +35,7 @@ $('.add-btn').click(function(){
 });
 
 
-$('.remove-btn').click(function(){
+$('.remove-btn').click(function () {
     var rowId = this.dataset.rowId;
     $(this).parents('tr').remove();
     $.ajax({
@@ -22,7 +44,7 @@ $('.remove-btn').click(function(){
         dataType: 'json',
         url: '/api/watchlist/remove/',
         data: JSON.stringify({row_id: rowId}),
-        error: function() {
+        error: function () {
             alert("Some error occurred")
         }
     });
@@ -72,19 +94,6 @@ function changePriceColor(price, domElement) {
         domElement.addClass('glyphicon').addClass('glyphicon-arrow-down');
     }
 }
-
-
-$(function () {
-    // Update the current stock price after DOM loaded
-    updateStockPrice();
-    $("time.timeago").timeago();
-
-    $('.symbol').click(function (e) {
-        e.preventDefault();
-        loadDeliverables(this.dataset.symbol, this.dataset.tradedate);
-    })
-
-});
 
 var today_date_time = new Date();
 var today_day = today_date_time.getDay();
