@@ -1,6 +1,7 @@
 from datetime import date, timedelta, datetime
+from django.core.urlresolvers import reverse
 from django.db.models import F
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .models import StockHistory
 
@@ -32,6 +33,9 @@ def stock_history_view(request):
             elif trade_date:
                 stocks = stocks_qs.filter(trade_date=date_field).annotate(
                     change=F('close') - F('open')).select_related('stock')
+            else:
+                return redirect(reverse('history'))
+
             ctx['stocks'] = stocks
 
     elif request.method == 'GET':
