@@ -2,8 +2,8 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-12">
         <table class="table table-hover">
             <thead>
             <tr>
@@ -12,6 +12,7 @@
                 <th>LTP</th>
                 <th>Overall Gain</th>
                 <th>Trade date</th>
+                <th>Comments</th>
             </tr>
             </thead>
             <tbody>
@@ -38,7 +39,9 @@
                     &nbsp;<span class="glyphicon glyphicon-time"></span>
                     <div class="addFadeColor">({{ i.trade_date }})</div>
                 </td>
+                <td>{{ i.comments }}</td>
                 <td><span class="glyphicon glyphicon-remove remove-btn" data-row-id="{{ i.id }}"></span></td>
+
             </tr>
             {% endfor %}
             </tbody>
