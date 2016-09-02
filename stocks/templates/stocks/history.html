@@ -12,7 +12,7 @@
 
 <div class="row" style="margin-top: 20px;">
     <div class="col-sm-2"></div>
-    <div class="col-sm-6">
+    <div class="col-sm-8">
         <form method="POST">
             {% csrf_token %}
             <table class="table table-hover">
@@ -24,6 +24,7 @@
                     <th>LTP</th>
                     <th>Overall Gain</th>
                     <th>Watch-list</th>
+                    <th>Comments</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,12 +52,6 @@
                         <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
                         <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
                     </td>
-                    <!--<td><input type="checkbox" name="watch_list" value="{{ i.id }}"-->
-                               <!--{% if i.watch_list %}-->
-                               <!--checked=true-->
-                               <!--{% endif %}-->
-                    <!--&gt;-->
-                    <!--</td>-->
                     <td>
                         {% if i.watch_list %}
                             <span class="glyphicon glyphicon-ok ok-btn"></span>
@@ -64,13 +59,14 @@
                             <span class="glyphicon glyphicon-plus add-btn" data-row-id="{{ i.id }}"></span>
                         {% endif %}
                     </td>
+                    <td>
+                        <textarea class="comment" rows="2" cols="30" id="{{ i.id }}">{{ i.comments }}</textarea>
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <!--<div class="pull-right">-->
-                <!--<input type="submit" value="Add to Watch-list" name="to_watchlist">-->
-            <!--</div>-->
+
         </form>
     </div>
 </div>
