@@ -10,64 +10,61 @@
     </form>
 </div>
 
-<div class="row" style="margin-top: 20px;">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
-        <form method="POST">
-            {% csrf_token %}
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Symbol</th>
-                    <th>Trade Date</th>
-                    <th>Avg. Price</th>
-                    <th>LTP</th>
-                    <th>Overall Gain</th>
-                    <th>Watch-list</th>
-                    <th>Comments</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in stocks %}
-                <tr>
-                    <td>
-                        <div class="symbol" data-target="#deliveryModal"
-                             data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">
-                            {{ i.stock }}
-                        </div>
-                        <div class="addFadeColor">
-                            <a href="{{ i.stock.moneycontrol_link }}"
-                               target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
-                    </td>
-                    <td>{{ i.trade_date }}
-                        <div>
-                            <time class="timeago addFadeColor" datetime="{{ i.trade_date }}"></time>
-                        </div>
-                    </td>
-                    <td>{{ i.close }}</td>
-                    <td>
-                        <div class="{{ i.stock }}-current-price"></div>
-                        <span class="{{ i.stock }}-today-change today-change"></span></td>
-                    <td>
-                        <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
-                        <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
-                    </td>
-                    <td>
-                        {% if i.watch_list %}
-                            <span class="glyphicon glyphicon-ok ok-btn"></span>
-                        {% else %}
-                            <span class="glyphicon glyphicon-plus add-btn" data-row-id="{{ i.id }}"></span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <textarea class="comment" rows="2" cols="30" id="{{ i.id }}">{{ i.comments }}</textarea>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+<div class="stock-container">
+    <form method="POST">
+        {% csrf_token %}
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Trade Date</th>
+                <th>Avg. Price</th>
+                <th>LTP</th>
+                <th>Overall Gain</th>
+                <th>Watch-list</th>
+                <th>Comments</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in stocks %}
+            <tr>
+                <td>
+                    <div class="symbol" data-target="#deliveryModal"
+                         data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">
+                        {{ i.stock }}
+                    </div>
+                    <div class="addFadeColor">
+                        <a href="{{ i.stock.moneycontrol_link }}"
+                           target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
+                </td>
+                <td>{{ i.trade_date }}
+                    <div>
+                        <time class="timeago addFadeColor" datetime="{{ i.trade_date }}"></time>
+                    </div>
+                </td>
+                <td>{{ i.close }}</td>
+                <td>
+                    <div class="{{ i.stock }}-current-price"></div>
+                    <span class="{{ i.stock }}-today-change today-change"></span></td>
+                <td>
+                    <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
+                    <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
+                </td>
+                <td>
+                    {% if i.watch_list %}
+                    <span class="glyphicon glyphicon-ok ok-btn" data-row-id="{{ i.id }}"></span>
+                    {% else %}
+                    <span class="glyphicon glyphicon-plus add-btn" data-row-id="{{ i.id }}"></span>
+                    {% endif %}
+                </td>
+                <td>
+                    <input class="comment form-control" id="{{ i.id }}" value="{{ i.comments }}">
+                </td>
 
-        </form>
-    </div>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </form>
 </div>
 {% endblock %}

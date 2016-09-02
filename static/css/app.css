@@ -22,7 +22,7 @@ span.remove-btn {
     cursor: pointer;
 }
 
-tr:hover span.remove-btn{
+tr:hover span.remove-btn {
     visibility: visible;
 }
 span.add-btn {
@@ -36,6 +36,10 @@ span.ok-btn {
     margin-left: 30%;
     margin-top: 13%;
     color: hsl(120, 60%, 35%);
+}
+
+.stock-container {
+    margin: 20px 100px 0 100px;
 }
 
 

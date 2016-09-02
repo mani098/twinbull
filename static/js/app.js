@@ -17,23 +17,19 @@ $(function () {
             source: responseData.symbols
         });
     });
-
 });
 
-$('.add-btn').click(function () {
-
-
+$('span.add-btn').click(function () {
     var rowId = this.dataset.rowId;
     var comment = document.getElementById(rowId).value;
+    this.className = "glyphicon glyphicon-ok ok-btn";
 
-    this.className = "glyphicon glyphicon-ok ok-btn"
     $.ajax({
         type: 'POST',
         contentType: 'application/json',
         dataType: 'json',
         url: '/api/watchlist/add/',
         data: JSON.stringify({row_id: rowId, comments: comment})
-
     });
 
 });
