@@ -29,10 +29,18 @@
             {% for i in stocks %}
             <tr>
                 <td>
+                    {% if i.is_filtered %}
                     <div class="symbol" data-target="#deliveryModal"
                          data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">
                         {{ i.stock }}
                     </div>
+
+                    {% else %}
+                    <div class="symbol" data-target="#deliveryModal"
+                         data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}" style="color:red">
+                        {{ i.stock }}
+                    </div>
+                    {% endif %}
                     <div class="addFadeColor">
                         <a href="{{ i.stock.moneycontrol_link }}"
                            target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
