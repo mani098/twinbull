@@ -28,6 +28,11 @@ def stock_history_view(request):
                     stocks = stocks_qs.filter(trade_date__range=[today_date - timedelta(25), today_date],
                                               stock__symbol=symbol.strip()) \
                         .order_by('-trade_date')
+
+                    if not stocks:
+                        stocks_nt_filt = StockHistory.objects.filter(is_filtered=False)
+                        trade_date = stocks_nt_filt.order_by('-trade_date').first().trade_date
+                        stocks = stocks_nt_filt.filter(trade_date=trade_date,stock__symbol=symbol)
                 else:
                     stocks = stocks_qs.filter(trade_date=date_field, stock__symbol=symbol.strip())
             elif trade_date:
