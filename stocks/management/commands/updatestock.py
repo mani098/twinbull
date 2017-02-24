@@ -8,8 +8,8 @@ from stocks.models import StockHistory
 class Command(BaseCommand):
     def run_this(self):
 
-        d1 = date(2012, 01, 01)
-        d2 = date(2012, 12, 31)
+        d1 = date(2016, 01, 01)
+        d2 = date(2016, 12, 31)
 
         delta = d2 - d1
 

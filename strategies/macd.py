@@ -32,23 +32,42 @@ class ProcessStragey1(object):
         data = self.get_macd_data()
         buy_signals = collections.OrderedDict((i, j) for i, j in data.iteritems() if 0 < j['histogram'] < 1)
 
-        print 'days\tBuy date\tB.price\tSell date\tSold at\tprof.%\tprofit'
+        print 'Days\tBuy date\tB.price\tSell_date\tSold_at\tProf.%\tProfit'
+        n_profit = 0
+        total_buy_signals = len(buy_signals)
         for buy_date, macd in buy_signals.iteritems():
             trade_dates = filter(lambda x: x > buy_date, data)
             profit = 0
-            prev_close = StockHistory.objects.get(stock_id=self.stock.id, trade_date=buy_date).close
+
+            try:
+                prev_close = StockHistory.objects.get(stock_id=self.stock.id, trade_date=buy_date).close
+            except StockHistory.MultipleObjectsReturned:
+                print "Multiple records found", self.stock.id, buy_date
+                return
+
             bought_at = prev_close
             previous_histogram = macd['histogram']
             for trade_date in trade_dates:
                 if data[trade_date]['histogram'] > previous_histogram:
-                    current_close = StockHistory.objects.get(stock_id=self.stock.id, trade_date=trade_date).close
+                    try:
+                        current_close = StockHistory.objects.get(stock_id=self.stock.id, trade_date=trade_date).close
+                    except StockHistory.MultipleObjectsReturned:
+                        print "Multiple records found", self.stock.id, trade_date
+                        return
+
                     profit += current_close - prev_close
                     prev_close = current_close
                     previous_histogram = data[trade_date]['histogram']
                 else:
+                    if profit > 0:
+                        n_profit += 1
                     if profit != 0:
                         print '%s\t%s\t%.1f\t%s\t%.1f\t%.2f%%\t%.2f' % (
-                            (trade_date-buy_date).days,buy_date, bought_at, trade_date, prev_close, (100 / bought_at) * profit, profit)
+                            (trade_date - buy_date).days, buy_date, bought_at, trade_date, prev_close,
+                            (100 / bought_at) * profit, profit)
+                    else:
+                        total_buy_signals -= 1
                     break
 
-        print "Total buy signals: %s" % len(buy_signals)
+        print "Total buy signals: %s" % total_buy_signals
+        print "Accuracy: %s/%s" % (n_profit, total_buy_signals)
