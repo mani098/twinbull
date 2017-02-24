@@ -46,8 +46,10 @@ class Nse(object):
         bhavcopy_url = BHAV_COPY_URL % (trade_date[0], date_dict[trade_date[1]],
                                         trade_date[2], date_dict[trade_date[1]],
                                         trade_date[0])
-
-        response = requests.get(bhavcopy_url, stream=True)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+            'Referer': 'https://www.nseindia.com/products/content/equities/equities/archieve_eq.htm'}
+        response = requests.get(bhavcopy_url, stream=True, headers=headers)
         if response.status_code == 200:
             f = open(BHAV_LOCAL_PATH, 'wb')
             f.write(response.content)
@@ -59,7 +61,7 @@ class Nse(object):
 
     def _read_zip_file(self, filepath):
         zfile = zipfile.ZipFile(filepath)
-        deliverables_data = self.deliverables_data()
+        # deliverables_data = self.deliverables_data()
 
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
@@ -78,22 +80,24 @@ class Nse(object):
                                   'TOTTRDQTY': int(stock_data[8]),
                                   'TOTTRDVAL': float(stock_data[9]),
                                   'TRADEDDATE': trade_date,
-                                  'TOTALTRADES': int(stock_data[11]),
-                                  'DELIVERABLES': float(deliverables_data[stock_data[0]]),
-                                  'ISIN': stock_data[12]}
+                                  'TOTALTRADES': int(stock_data[11]) if len(stock_data) > 12 else 0,
+                                  # 'DELIVERABLES': float(deliverables_data[stock_data[0]]),
+                                  'DELIVERABLES': 0,
+                                  'ISIN': stock_data[12] if len(stock_data) > 12 else ''}
                     filtered_stock = self.filter_stock(stock=stock_hash)
                     yield filtered_stock
 
     def filter_stock(self, stock):
-        today_change = stock['CLOSE'] - stock['OPEN']
-        prev_change = stock['CLOSE'] - stock['PREVCLOSE']
-
-        if 15 <= stock['CLOSE'] <= 1000 and stock['TOTTRDQTY'] >= 10000 and \
-                (11 <= today_change <= 25 or -11 >= today_change >= -25) and \
-                        prev_change >= stock['PREVCLOSE'] / 100 and stock['DELIVERABLES'] > 65:
-
-            stock.update({'is_filtered': True})
-        else:
-            stock.update({'is_filtered': False})
+        # today_change = stock['CLOSE'] - stock['OPEN']
+        # prev_change = stock['CLOSE'] - stock['PREVCLOSE']
+        #
+        # if 15 <= stock['CLOSE'] <= 1000 and stock['TOTTRDQTY'] >= 10000 and \
+        #         (11 <= today_change <= 25 or -11 >= today_change >= -25) and \
+        #                 prev_change >= stock['PREVCLOSE'] / 100 and stock['DELIVERABLES'] > 65:
+        #
+        #     stock.update({'is_filtered': True})
+        # else:
+        #     stock.update({'is_filtered': False})
+        stock.update({'is_filtered': False})
 
         return stock

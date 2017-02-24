@@ -13,6 +13,8 @@ class Stock(models.Model):
     isin = models.CharField(max_length=30, verbose_name="ISIN")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Stock created at")
     moneycontrol_link = models.TextField(verbose_name='MoneyControl.com', null=True, default=None, blank=True)
+    moneycontrol_stock_id = models.CharField(verbose_name='Moneycontrol stock id', null=True, blank=True, default=None,
+                                             max_length=100)
 
     def __str__(self):
         return self.symbol
@@ -41,6 +43,7 @@ class StockHistoryManager(models.Manager):
 
         if stocks_history:
             StockHistory.objects.bulk_create(stocks_history)
+            print "Stocks downloaded for %s" % by_trade_date
         else:
             # for cron logs
             print "[%s] No data found on NSE" % datetime.now()
@@ -49,7 +52,7 @@ class StockHistoryManager(models.Manager):
 
 
 class StockHistory(models.Model):
-    stock = models.ForeignKey(Stock)
+    stock = models.ForeignKey(Stock, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     trade_date = models.DateField(verbose_name="Traded date")
     open = models.FloatField(verbose_name="Open price")
@@ -70,3 +73,6 @@ class StockHistory(models.Model):
         return '%d - %s' % (self.id, self.stock.symbol)
 
     objects = StockHistoryManager()
+
+    class Meta:
+        ordering = ('trade_date',)
