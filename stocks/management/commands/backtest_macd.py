@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from strategies.macd import ProcessStragey1
+from strategies.macd import ProcessStrategy1
 
 
 class Command(BaseCommand):
@@ -7,4 +7,4 @@ class Command(BaseCommand):
         parser.add_argument('symbol', nargs='+', type=str)
 
     def handle(self, *args, **options):
-        return ProcessStragey1(options['symbol'][0]).backtest()
+        return ProcessStrategy1(options['symbol'][0]).backtest()

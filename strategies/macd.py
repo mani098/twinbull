@@ -3,12 +3,47 @@ import collections
 import pandas as pd
 from utils.stockstats import StockDataFrame
 from datetime import date, timedelta
-import datetime
 
 from stocks.models import StockHistory, Stock
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-class ProcessStragey1(object):
+class MacdStrategy(object):
+    def __init__(self):
+        self.today = date.today()
+        self.stocks = StockHistory.objects.filter(total_traded_qty__gt=20000, trade_date=self.today).values('stock')
+        self.queryset = None
+
+    def get_macd(self, stock_id):
+        queryset = StockHistory.objects.filter(stock_id=stock_id, trade_date__range=['2016-01-01', self.today]) \
+            .extra(select={'date': 'trade_date'}).values('date', 'close')
+        stockdataframe = StockDataFrame.retype(pd.DataFrame.from_records(queryset))
+        histogram = stockdataframe['macdh'].to_dict()
+
+        # Not considering first 30 days of data
+        macd_results = collections.OrderedDict(
+            (trade_date, {'histogram': histogram[trade_date]}) for trade_date in sorted(histogram.keys()[:2]))
+        return macd_results
+
+    def buy_signals(self):
+        if self.stocks.count() == 0:
+            logger.info("No data exists")
+            return
+        for stock in self.stocks:
+            macd_results = self.get_macd(stock_id=stock.id)
+            cur_histogram = macd_results.pop(self.today)['histogram']
+            prev_histogram = macd_results.items()[0]['histogram']
+            stock_history_obj = StockHistory.objects.get(stock_id=stock.id,
+                                                         trade_date=self.today)
+            if 0 > cur_histogram > prev_histogram and not stock_history_obj.watch_list:
+                stock_history_obj.watch_list = True
+                stock_history_obj.save(update_fields=['watch_list'])
+        logger.info("Buy signal updated in watch list")
+
+
+class ProcessStrategy1(object):
     """trend prediction with macd and cci graph"""
 
     def __init__(self, symbol):
@@ -19,7 +54,7 @@ class ProcessStragey1(object):
         queryset = StockHistory.objects.filter(stock_id=self.stock.id,
                                                ).extra(
             select={'date': 'trade_date'}).values(
-            'date', 'open', 'high', 'low', 'close')
+            'date', 'close')
         stockdataframe = StockDataFrame.retype(pd.DataFrame.from_records(queryset))
 
         histogram = stockdataframe['macdh'].to_dict()
@@ -68,8 +103,6 @@ class ProcessStragey1(object):
                                                         trade_date__gt=buy_date).first().open
             except AttributeError as err:
                 print err, 73
-                import ipdb;
-                ipdb.set_trace()
                 continue
 
             bought_at = buy_price
@@ -81,7 +114,6 @@ class ProcessStragey1(object):
                                                                trade_date__gt=trade_date).first().open
                 except AttributeError as err:
                     print err, 86
-                    import ipdb; ipdb.set_trace()
                     continue
                 profit += current_open - buy_price
                 buy_price = current_open
@@ -90,7 +122,7 @@ class ProcessStragey1(object):
                     previous_histogram = data[trade_date]['histogram']
                 else:
                     if profit > 0:
-                            n_profit += 1
+                        n_profit += 1
                     elif profit < 0:
                         n_negative += 1
                     elif profit == 0:
