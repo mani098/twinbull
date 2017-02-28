@@ -13,34 +13,42 @@ logger = logging.getLogger(__name__)
 class MacdStrategy(object):
     def __init__(self):
         self.today = date.today()
-        self.stocks = StockHistory.objects.filter(total_traded_qty__gt=20000, trade_date=self.today).values('stock')
+        stocks_ids = StockHistory.objects.filter(total_traded_qty__gt=100000, close__gt=50,
+                                                 trade_date=self.today).values_list(
+            'stock_id', flat=True)
+        self.stocks = Stock.objects.filter(id__in=stocks_ids)
         self.queryset = None
 
     def get_macd(self, stock_id):
-        queryset = StockHistory.objects.filter(stock_id=stock_id, trade_date__range=['2016-01-01', self.today]) \
+        queryset = StockHistory.objects.filter(stock_id=stock_id,
+                                               trade_date__range=['2016-01-01', self.today]) \
             .extra(select={'date': 'trade_date'}).values('date', 'close')
         stockdataframe = StockDataFrame.retype(pd.DataFrame.from_records(queryset))
         histogram = stockdataframe['macdh'].to_dict()
-
-        # Not considering first 30 days of data
-        macd_results = collections.OrderedDict(
-            (trade_date, {'histogram': histogram[trade_date]}) for trade_date in sorted(histogram.keys()[:2]))
+        macd_results = {
+            trade_date: {'histogram': histogram[trade_date]} for trade_date in sorted(histogram.keys())[-2:]}
         return macd_results
 
     def buy_signals(self):
-        if self.stocks.count() == 0:
+        stocks_count = self.stocks.count()
+        if stocks_count == 0:
             logger.info("No data exists")
             return
+        logger.info('Total eligible stocks: %d' % stocks_count)
+        total_buy_signals = 0
         for stock in self.stocks:
             macd_results = self.get_macd(stock_id=stock.id)
+            if not bool(macd_results) or not macd_results.has_key(self.today):
+                continue
             cur_histogram = macd_results.pop(self.today)['histogram']
-            prev_histogram = macd_results.items()[0]['histogram']
+            prev_histogram = macd_results.pop(macd_results.keys()[0])['histogram']
             stock_history_obj = StockHistory.objects.get(stock_id=stock.id,
                                                          trade_date=self.today)
             if 0 > cur_histogram > prev_histogram and not stock_history_obj.watch_list:
                 stock_history_obj.watch_list = True
                 stock_history_obj.save(update_fields=['watch_list'])
-        logger.info("Buy signal updated in watch list")
+                total_buy_signals += 1
+        logger.info("Buy signals updated in watch list: %d/%d" % (total_buy_signals, stocks_count))
 
 
 class ProcessStrategy1(object):

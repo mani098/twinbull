@@ -112,8 +112,4 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-BHAV_COPY_URL = 'https://www.nseindia.com/content/historical/EQUITIES/%s/%s/cm%s%s%sbhav.csv.zip'
-
-DELIVERABLES_URL = "https://www.nseindia.com/archives/equities/mto/MTO_%s.DAT"
-
 BHAV_LOCAL_PATH = '/tmp/bhav.csv.zip'
