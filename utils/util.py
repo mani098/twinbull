@@ -1,3 +1,7 @@
+import requests, urllib
+from django.conf import settings
+
+
 def calculate_charges(stock_price=0, quantity=0):
     """
     Calculate charges for equity delivery
@@ -18,3 +22,20 @@ def calculate_charges(stock_price=0, quantity=0):
         stamp_duty = 50
 
     return brokerage + stt + transaction_charges + service_tax + sebi_charges + stamp_duty
+
+
+
+def send_via_telegram(text):
+	base_url = settings.TELEGRAM_BASE_URL
+	kaathi_id = settings.KAATHI_TELEGRAM_ID
+	mani_id = settings.MANI_TELEGRAM_ID
+
+	text_encode = urllib.quote_plus(text)
+	url_kaathi = base_url + kaathi_id + "&text=" + text_encode
+	url_mani = base_url + mani_id + "&text=" + text_encode
+
+	resp_kaathi = requests.get(url = url_kaathi)
+	resp_mani = requests.get(url=url_mani)
+
+
+	
