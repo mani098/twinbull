@@ -36,8 +36,6 @@ def send_via_telegram(text):
     resp_kaathi = requests.get(url=url_kaathi)
     resp_mani = requests.get(url=url_mani)
 
-    return resp_kaathi.ok and resp_mani.ok
-
 
 class NiftyStocks(object):
     def __init__(self):
