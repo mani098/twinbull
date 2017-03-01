@@ -51,14 +51,14 @@ $('.remove-btn').click(function () {
 });
 
 function updateStockPrice() {
-    var symbols = '';
+    var stock_ids = '';
     $.each($('div.symbol'), function (index, value) {
-        symbols += $(value).attr('data-symbol') + ',';
+        stock_ids += $(value).attr('data-stock-id') + ',';
     });
 
-    if (!symbols) return;
+    if (!stock_ids) return;
 
-    var stockQuotes_url = '/api/stockQuotes?symbols=' +symbols;
+    var stockQuotes_url = '/api/stockQuotes?stock_ids=' + stock_ids;
 
     $.ajax({
         type: 'GET',
@@ -119,20 +119,20 @@ function loadDeliverables(symbol, from_date, to_date) {
                 y_price.push(value.close);
             });
             var traceDeliverables =
-            {
-                x: x,
-                y: y_deliverables,
-                name: 'Deliverables',
-                type: 'scatter'
-            };
+                {
+                    x: x,
+                    y: y_deliverables,
+                    name: 'Deliverables',
+                    type: 'scatter'
+                };
             var tracePrice =
-            {
-                x: x,
-                y: y_price,
-                yaxis: 'y2',
-                name: 'Price',
-                type: 'scatter'
-            };
+                {
+                    x: x,
+                    y: y_price,
+                    yaxis: 'y2',
+                    name: 'Price',
+                    type: 'scatter'
+                };
             var plotlyData = [traceDeliverables, tracePrice];
             var layout = {
                 width: 1100,

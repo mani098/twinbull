@@ -46,20 +46,17 @@ def list_symbols(request):
 
 
 def stock_quotes(request):
-    symbols = request.GET['symbols'].split(',')
+    stock_ids = map(lambda x: int(x) if x else 0, request.GET['stock_ids'].split(','))
+    symbols = Stock.objects.filter(id__in=stock_ids).values_list('symbol', flat=True)
     quotes_url = settings.STOCK_QUOTE_URL
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
         'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm'}
-    symbols_str = ''
+
     results = []
-    for index, symbol in enumerate(symbols):
-        if index % 5 == 0:
-            symbols_str += symbol + ','
-            data = requests.get(quotes_url + '?symbol=' + symbols_str, headers=headers).json()['data']
-            results.extend(data)
-            symbols_str = ''
-        else:
-            symbols_str += symbol + ','
+    for x in range(0, len(symbols), 5):
+        symbols_str = ','.join(symbols[x:x + 5])
+        data = requests.get(quotes_url + '?symbol=' + symbols_str, headers=headers).json()['data']
+        results.extend(data)
 
     return JsonResponse({'data': results})
