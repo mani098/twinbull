@@ -11,7 +11,6 @@ from utils.util import send_via_telegram
 logger = logging.getLogger(__name__)
 
 
-
 class MacdStrategy(object):
     def __init__(self):
         self.today = date.today()
@@ -30,7 +29,7 @@ class MacdStrategy(object):
         stockdataframe = StockDataFrame.retype(pd.DataFrame.from_records(queryset))
         histogram = stockdataframe['macdh'].to_dict()
         macd_results = {
-            trade_date: {'histogram': histogram[trade_date]} for trade_date in sorted(histogram.keys())[-2:]}
+            trade_date: {'histogram': histogram[trade_date]} for trade_date in sorted(histogram.keys())[-3:]}
         return macd_results
 
     def buy_signals(self):
@@ -42,7 +41,7 @@ class MacdStrategy(object):
 
         # stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, stock__symbol__in=symbols)
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=200000,
-                                                                     close__gt=50)
+                                                                     close__gt=50, watch_list=False)
         stocks_count = stocks.count()
         if stocks_count == 0:
             logger.info("No data exists")
@@ -54,10 +53,12 @@ class MacdStrategy(object):
             macd_results = self.get_macd(stock_id=stock.stock_id)
             if not bool(macd_results) or self.today not in macd_results:
                 continue
-            cur_histogram = macd_results.pop(self.today)['histogram']
-            prev_histogram = macd_results.pop(macd_results.keys()[0])['histogram']
+            histograms = map(lambda x: x['histogram'], macd_results.values())
+            cur_histogram = histograms[2]
+            prev_histogram_1 = histograms[1]
+            prev_histogram_2 = histograms[0]
             stock_history_obj = stocks.get(stock_id=stock.stock_id, trade_date=self.today)
-            if 0 > cur_histogram > prev_histogram and not stock_history_obj.watch_list:
+            if 0 > cur_histogram > prev_histogram_1 > prev_histogram_2 and not stock_history_obj.watch_list:
                 # if cur_histogram > 0 and prev_histogram < 0 and not stock_history_obj.watch_list:
                 total_buy_signals += 1
                 text += '{0}.\t{1}\tRs.{2}\n'.format(total_buy_signals, stock.stock.symbol, stock.close)
