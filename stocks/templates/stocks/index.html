@@ -17,8 +17,8 @@
         {% for i in stocks %}
         <tr>
             <td>
-                <div class="symbol" data-target="#deliveryModal"
-                     data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">{{ i.stock }}
+                <div class="symbol"
+                     data-symbol="{{ i.stock }}" data-stock-id="{{ i.stock.id }}" data-tradedate="{{ i.trade_date }}">{{ i.stock }}
                 </div>
                 <div class="addFadeColor"><a
                         href="{{ i.stock.moneycontrol_link }}"

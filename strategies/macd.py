@@ -1,12 +1,12 @@
 import collections
-
-import pandas as pd
-from utils.stockstats import StockDataFrame
+import logging
 from datetime import date, timedelta
 
+import pandas as pd
+
 from stocks.models import StockHistory, Stock
-from utils.util import send_via_telegram, NiftyStocks
-import logging
+from utils.stockstats import StockDataFrame
+from utils.util import send_via_telegram
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class MacdStrategy(object):
         stockdataframe = StockDataFrame.retype(pd.DataFrame.from_records(queryset))
         histogram = stockdataframe['macdh'].to_dict()
         macd_results = {
-            trade_date: {'histogram': histogram[trade_date]} for trade_date in sorted(histogram.keys())[-2:]}
+            trade_date: {'histogram': histogram[trade_date]} for trade_date in sorted(histogram.keys())[-3:]}
         return macd_results
 
     def buy_signals(self):
@@ -41,7 +41,7 @@ class MacdStrategy(object):
 
         # stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, stock__symbol__in=symbols)
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=200000,
-                                                                     close__gt=50)
+                                                                     close__gt=50, watch_list=False)
         stocks_count = stocks.count()
         if stocks_count == 0:
             logger.info("No data exists")
@@ -53,16 +53,17 @@ class MacdStrategy(object):
             macd_results = self.get_macd(stock_id=stock.stock_id)
             if not bool(macd_results) or self.today not in macd_results:
                 continue
-            cur_histogram = macd_results.pop(self.today)['histogram']
-            prev_histogram = macd_results.pop(macd_results.keys()[0])['histogram']
+            histograms = map(lambda x: x['histogram'], macd_results.values())
+            cur_histogram = histograms[2]
+            prev_histogram_1 = histograms[1]
+            prev_histogram_2 = histograms[0]
             stock_history_obj = stocks.get(stock_id=stock.stock_id, trade_date=self.today)
-            if 0 > cur_histogram > prev_histogram and not stock_history_obj.watch_list:
+            if 0 > cur_histogram > prev_histogram_1 > prev_histogram_2 and not stock_history_obj.watch_list:
                 # if cur_histogram > 0 and prev_histogram < 0 and not stock_history_obj.watch_list:
                 total_buy_signals += 1
                 text += '{0}.\t{1}\tRs.{2}\n'.format(total_buy_signals, stock.stock.symbol, stock.close)
                 stock_history_obj.watch_list = True
-                stock_history_obj.is_filtered = True
-                stock_history_obj.save(update_fields=['watch_list', 'is_filtered'])
+                stock_history_obj.save(update_fields=['watch_list'])
         if total_buy_signals > 0:
             send_via_telegram(text)
 
@@ -93,9 +94,8 @@ class MacdStrategy(object):
                 text += '{0}.\t{1}\t{2}\tRs.{3}\t{4:.2f}%\n'.format(total_sell_signals, stock.trade_date,
                                                                     stock.stock.symbol, stock_history_obj.close,
                                                                     profit)
-                stock.is_filtered = False
                 stock.comments = 'SOLD @ {0}  {1:.2f}%'.format(stock_history_obj.close, profit)
-                stock.save(update_fields=['is_filtered', 'comments'])
+                stock.save(update_fields=['comments'])
         if total_sell_signals > 0:
             send_via_telegram(text)
         logger.info("Sell signals updated in watch list: %d/%d" % (total_sell_signals, stocks_count))
