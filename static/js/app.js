@@ -3,20 +3,20 @@ $(function () {
     updateStockPrice();
     $("time.timeago").timeago();
 
-    $('.symbol').click(function (e) {
-        e.preventDefault();
-        loadDeliverables(this.dataset.symbol, this.dataset.tradedate);
-    });
+    // $('.symbol').click(function (e) {
+    //     e.preventDefault();
+    //     loadDeliverables(this.dataset.symbol, this.dataset.tradedate);
+    // });
     $("#datepicker").datepicker();
 
-    $.ajax({
-        url: '/api/symbols/',
-        type: 'GET'
-    }).done(function (responseData) {
-        $("#symbol-tag").autocomplete({
-            source: responseData.symbols
-        });
-    });
+    // $.ajax({
+    //     url: '/api/symbols/',
+    //     type: 'GET'
+    // }).done(function (responseData) {
+    //     $("#symbol-tag").autocomplete({
+    //         source: responseData.symbols
+    //     });
+    // });
 });
 
 $('span.add-btn').click(function () {

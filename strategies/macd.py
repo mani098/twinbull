@@ -1,14 +1,15 @@
 import collections
-
-import pandas as pd
-from utils.stockstats import StockDataFrame
+import logging
 from datetime import date, timedelta
 
+import pandas as pd
+
 from stocks.models import StockHistory, Stock
-from utils.util import send_via_telegram, NiftyStocks
-import logging
+from utils.stockstats import StockDataFrame
+from utils.util import send_via_telegram
 
 logger = logging.getLogger(__name__)
+
 
 
 class MacdStrategy(object):
@@ -61,8 +62,7 @@ class MacdStrategy(object):
                 total_buy_signals += 1
                 text += '{0}.\t{1}\tRs.{2}\n'.format(total_buy_signals, stock.stock.symbol, stock.close)
                 stock_history_obj.watch_list = True
-                stock_history_obj.is_filtered = True
-                stock_history_obj.save(update_fields=['watch_list', 'is_filtered'])
+                stock_history_obj.save(update_fields=['watch_list'])
         if total_buy_signals > 0:
             send_via_telegram(text)
 
@@ -93,9 +93,8 @@ class MacdStrategy(object):
                 text += '{0}.\t{1}\t{2}\tRs.{3}\t{4:.2f}%\n'.format(total_sell_signals, stock.trade_date,
                                                                     stock.stock.symbol, stock_history_obj.close,
                                                                     profit)
-                stock.is_filtered = False
                 stock.comments = 'SOLD @ {0}  {1:.2f}%'.format(stock_history_obj.close, profit)
-                stock.save(update_fields=['is_filtered', 'comments'])
+                stock.save(update_fields=['comments'])
         if total_sell_signals > 0:
             send_via_telegram(text)
         logger.info("Sell signals updated in watch list: %d/%d" % (total_sell_signals, stocks_count))
