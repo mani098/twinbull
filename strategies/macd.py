@@ -22,7 +22,7 @@ class MacdStrategy(object):
         getattr(self, signal_method)()
 
     def get_macd(self, stock_id):
-        """Get macd data for an year and return only last 2 traded dates"""
+        """Get macd data for an year and return only last 3 traded dates"""
         queryset = StockHistory.objects.filter(stock_id=stock_id,
                                                trade_date__range=['2016-01-01', self.today]) \
             .extra(select={'date': 'trade_date'}).values('date', 'close')

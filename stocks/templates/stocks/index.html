@@ -1,48 +1,57 @@
 {% extends 'stocks/base.html' %}
 
 {% block content %}
-<div class="stock-container">
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th>Symbol</th>
-            <th style="width: 100px">Avg. Price</th>
-            <th>LTP</th>
-            <th style="width: 100px">Overall Gain</th>
-            <th style="width: 150px">Trade date</th>
-            <th>Comments</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for i in stocks %}
-        <tr>
-            <td>
-                <div class="symbol"
-                     data-symbol="{{ i.stock }}" data-stock-id="{{ i.stock.id }}" data-tradedate="{{ i.trade_date }}">{{ i.stock }}
-                </div>
-                <div class="addFadeColor"><a
-                        href="{{ i.stock.moneycontrol_link }}"
-                        target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
-            </td>
-            <td>{{ i.close }}</td>
-            <td>
-                <div class="{{ i.stock }}-current-price"></div>
-                <span class="{{ i.stock }}-today-change today-change"></span></td>
-            <td>
-                <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
-                <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
-            </td>
-            <td>
-                <time class="timeago" datetime="{{ i.trade_date }}"></time>
-                &nbsp;<span class="glyphicon glyphicon-time"></span>
-                <div class="addFadeColor">({{ i.trade_date }})</div>
-            </td>
-            <td>{{ i.comments }}</td>
-            <td><span class="glyphicon glyphicon-remove remove-btn" data-row-id="{{ i.id }}"></span></td>
+    <div>
+        <form method="get" class="form-inline" style="text-align: center;">
+{#            {% csrf_token %}#}
+{#            <input id="symbol-tag" name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>#}
+            <input name="trade-date" placeholder="03/22/2017" type="text" id="datepicker" class="form-control"/>
+            <button type="submit" class="form-control">Search</button>
+        </form>
+    </div>
+    <div class="stock-container">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Symbol</th>
+                <th style="width: 100px">Avg. Price</th>
+                <th>LTP</th>
+                <th style="width: 100px">Overall Gain</th>
+                <th style="width: 150px">Trade date</th>
+                <th>Comments</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in stocks %}
+                <tr>
+                    <td>
+                        <div class="symbol"
+                             data-symbol="{{ i.stock }}" data-stock-id="{{ i.stock.id }}"
+                             data-tradedate="{{ i.trade_date }}">{{ i.stock }}
+                        </div>
+                        <div class="addFadeColor"><a
+                                href="{{ i.stock.moneycontrol_link }}"
+                                target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
+                    </td>
+                    <td>{{ i.close }}</td>
+                    <td>
+                        <div class="{{ i.stock }}-current-price"></div>
+                        <span class="{{ i.stock }}-today-change today-change"></span></td>
+                    <td>
+                        <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
+                        <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
+                    </td>
+                    <td>
+                        <time class="timeago" datetime="{{ i.trade_date }}"></time>
+                        &nbsp;<span class="glyphicon glyphicon-time"></span>
+                        <div class="addFadeColor">({{ i.trade_date }})</div>
+                    </td>
+                    <td>{{ i.comments }}</td>
+                    <td><span class="glyphicon glyphicon-remove remove-btn" data-row-id="{{ i.id }}"></span></td>
 
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

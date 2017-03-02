@@ -11,10 +11,6 @@ body {
     font-size: 14px;
 }
 
-.symbol {
-    cursor: pointer;
-}
-
 span.remove-btn {
     margin-top: 35%;
     color: rgb(197, 16, 16);
@@ -45,10 +41,10 @@ span.ok-btn {
 
 /*Override vendor css*/
 
-.modal-dialog {
-    max-height: 900px;
-    width: 1200px;
-}
+/*.modal-dialog {*/
+    /*max-height: 900px;*/
+    /*width: 1200px;*/
+/*}*/
 
 .timeago {
     text-transform: capitalize;
