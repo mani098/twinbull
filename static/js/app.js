@@ -53,30 +53,30 @@ $('.remove-btn').click(function () {
 function updateStockPrice() {
     var symbols = '';
     $.each($('div.symbol'), function (index, value) {
-        symbols += 'NSE:' + $(value).attr('data-symbol') + ',';
+        symbols += $(value).attr('data-symbol') + ',';
     });
 
     if (!symbols) return;
 
-    var google_finance_url = "http://finance.google.com/finance/info?client=ig&q=" + symbols;
+    var stockQuotes_url = '/api/stockQuotes?symbols=' +symbols;
 
     $.ajax({
-        crossDomain: true,
         type: 'GET',
         contentType: "application/json; charset=utf-8",
-        url: google_finance_url,
-        dataType: "jsonp",
+        url: stockQuotes_url,
         success: function (data) {
-            $.each(data, function (index, value) {
-                $("." + value.t + '-current-price').text(value.l);
-                var todayChangeSpan = $('.' + value.t + '-today-change'),
-                    todayChangePrice = parseFloat(value.c);
+            $.each(data['data'], function (index, value) {
+                var lastPrice = value.lastPrice;
+                var symbol = value.symbol
+                $("." + symbol + '-current-price').text(lastPrice);
+                var todayChangeSpan = $('.' + symbol + '-today-change'),
+                    todayChangePrice = parseFloat(value.change);
                 todayChangeSpan.text(todayChangePrice);
                 changePriceColor(todayChangePrice, todayChangeSpan);
-                var overallGainDiv = $("." + value.t + '-overall-gain');
-                var overallGainPrice = (value.l) - overallGainDiv.attr('data-close');
+                var overallGainDiv = $("." + symbol + '-overall-gain');
+                var overallGainPrice = (lastPrice) - overallGainDiv.attr('data-close');
                 var overallGainPercent = overallGainPrice / (overallGainDiv.attr('data-close') / 100);
-                $('.' + value.t + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + '%)');
+                $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + '%)');
                 overallGainDiv.text(overallGainPrice.toFixed(2));
                 changePriceColor(overallGainPrice, overallGainDiv);
             });
@@ -85,7 +85,7 @@ function updateStockPrice() {
 }
 
 function changePriceColor(price, domElement) {
-    if (price > 0) {
+    if (price > 0 || price == NaN) {
         domElement.css('color', '#3a6c00');
         domElement.addClass('glyphicon').addClass('glyphicon-arrow-up');
     }
@@ -102,7 +102,7 @@ var present_time = today_date_time.getHours();
 if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_time > 9))) {
     setInterval(function () {
         updateStockPrice();
-    }, 5000);
+    }, 25000);
 }
 
 function loadDeliverables(symbol, from_date, to_date) {

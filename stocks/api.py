@@ -5,6 +5,9 @@ from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from stocks.models import StockHistory, Stock
+from django.conf import settings
+
+import requests
 
 
 def deliverable_api(request):
@@ -40,3 +43,23 @@ def watchlist_add(request):
 def list_symbols(request):
     symbols = list(Stock.objects.all().values_list('symbol', flat=True))
     return JsonResponse({'symbols': symbols})
+
+
+def stock_quotes(request):
+    symbols = request.GET['symbols'].split(',')
+    quotes_url = settings.STOCK_QUOTE_URL
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+        'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm'}
+    symbols_str = ''
+    results = []
+    for index, symbol in enumerate(symbols):
+        if index % 5 == 0:
+            symbols_str += symbol + ','
+            data = requests.get(quotes_url + '?symbol=' + symbols_str, headers=headers).json()['data']
+            results.extend(data)
+            symbols_str = ''
+        else:
+            symbols_str += symbol + ','
+
+    return JsonResponse({'data': results})

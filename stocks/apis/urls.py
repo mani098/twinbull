@@ -1,8 +1,12 @@
-from .views import StockListAPIView
+from .views import Stockapiview
 
-from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = [
-				url(r'^$', StockListAPIView.as_view(), name='list'),
+router = DefaultRouter()
+router.register(r'v2', Stockapiview, base_name='stocks')
+urlpatterns = router.urls
 
-               ]
+
+
+
+

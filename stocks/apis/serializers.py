@@ -7,8 +7,10 @@ class StockSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = StockHistory
 		fields = [
+			'id',
 			'stock',
 			'trade_date',
 			'watch_list',
-			'is_filtered'
+			'comments'
 		]
+
