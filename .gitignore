@@ -92,3 +92,4 @@ ENV/
 
 .idea/
 /twinbull/settings.py
+remote_push.sh
