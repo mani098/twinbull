@@ -95,7 +95,8 @@ class MacdStrategy(object):
                                                                     stock.stock.symbol, stock_history_obj.close,
                                                                     profit)
                 stock.comments = 'SOLD @ {0}  {1:.2f}%'.format(stock_history_obj.close, profit)
-                stock.save(update_fields=['comments'])
+                stock.is_filtered = True
+                stock.save(update_fields=['comments', 'is_filtered'])
         if total_sell_signals > 0:
             send_via_telegram(text)
         logger.info("Sell signals updated in watch list: %d/%d" % (total_sell_signals, stocks_count))
