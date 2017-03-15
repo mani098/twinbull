@@ -1,12 +1,13 @@
 import collections
 import logging
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 import pandas as pd
 
 from stocks.models import StockHistory, Stock
 from utils.stockstats import StockDataFrame
 from utils.util import send_via_telegram
+from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 class MacdStrategy(object):
     def __init__(self):
         self.today = date.today()
+        # self.today = date(2017, 03, 14)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
@@ -28,20 +30,31 @@ class MacdStrategy(object):
             .extra(select={'date': 'trade_date'}).values('date', 'close')
         stockdataframe = StockDataFrame.retype(pd.DataFrame.from_records(queryset))
         histogram = stockdataframe['macdh'].to_dict()
-        macd_results = {
-            trade_date: {'histogram': histogram[trade_date]} for trade_date in sorted(histogram.keys())[-3:]}
+        macd_results = OrderedDict(
+            (trade_date, {'histogram': histogram[trade_date]}) for trade_date in sorted(histogram.keys())[-3:])
         return macd_results
 
-    def buy_signals(self):
-        # nifty_api = NiftyStocks()
-        # nifty_stocks = map(lambda x: x['symbol'], nifty_api.nifty()['data'])
-        # next_nifty_stocks = map(lambda x: x['symbol'], nifty_api.next_nifty()['data'])
-        # symbols = nifty_stocks + next_nifty_stocks
-        # symbols = nifty_stocks
+    def is_valid_buy(self, curr_stock, histograms):
+        queryset = StockHistory.objects.filter(stock_id=curr_stock.stock_id,
+                                               trade_date__range=[self.today - timedelta(days=10),
+                                                                  self.today]).order_by('-trade_date')
+        qs_count = queryset.count()
+        cur_histogram = histograms[2]
+        curr_price_change = curr_stock.close - curr_stock.open
 
-        # stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, stock__symbol__in=symbols)
+        prev_histogram_1 = histograms[1]
+        prev_price_change_1 = queryset[1].close - queryset[1].open if qs_count > 1 else True
+        prev_histogram_2 = histograms[0]
+        prev_price_change_2 = queryset[2].close - queryset[2].open if qs_count > 2 else True
+        # if curr_stock.stock.symbol == 'AMARAJABAT':
+        #     pass
+        print curr_stock.stock.symbol, curr_stock.close, cur_histogram, prev_histogram_1, prev_histogram_2, '\t', curr_price_change, prev_price_change_1, prev_price_change_2
+        return (0 > cur_histogram > prev_histogram_1 > prev_histogram_2 or (prev_histogram_1 < 0 < cur_histogram)) and \
+               curr_price_change > 0 and prev_price_change_1 > 0 and prev_price_change_2 > 0
+
+    def buy_signals(self):
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=200000,
-                                                                     close__gt=50, watch_list=False)
+                                                                     watch_list=False)
         stocks_count = stocks.count()
         if stocks_count == 0:
             logger.info("No data exists")
@@ -54,14 +67,10 @@ class MacdStrategy(object):
             if not bool(macd_results) or self.today not in macd_results:
                 continue
             histograms = map(lambda x: x['histogram'], macd_results.values())
-            cur_histogram = histograms[2]
-            prev_histogram_1 = histograms[1]
-            prev_histogram_2 = histograms[0]
-            stock_history_obj = stocks.get(stock_id=stock.stock_id, trade_date=self.today)
-            if 0 > cur_histogram > prev_histogram_1 > prev_histogram_2 and not stock_history_obj.watch_list:
-                # if cur_histogram > 0 and prev_histogram < 0 and not stock_history_obj.watch_list:
+            if self.is_valid_buy(curr_stock=stock, histograms=histograms):
                 total_buy_signals += 1
                 text += '{0}.\t{1}\tRs.{2}\n'.format(total_buy_signals, stock.stock.symbol, stock.close)
+                stock_history_obj = stocks.get(stock_id=stock.stock_id, trade_date=self.today)
                 stock_history_obj.watch_list = True
                 stock_history_obj.save(update_fields=['watch_list'])
         if total_buy_signals > 0:
@@ -70,7 +79,7 @@ class MacdStrategy(object):
         logger.info("Buy signals updated in watch list: %d/%d" % (total_buy_signals, stocks_count))
 
     def sell_signals(self):
-        stocks = StockHistory.objects.select_related('stock').filter(watch_list=True, is_filtered=True)
+        stocks = StockHistory.objects.select_related('stock').filter(watch_list=True)
         stocks_count = stocks.count()
         if stocks_count == 0:
             logger.info("No data exists")
