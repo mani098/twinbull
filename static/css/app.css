@@ -37,7 +37,10 @@ span.ok-btn {
 .stock-container {
     margin: 20px 100px 0 100px;
 }
-
+.symbol {
+    cursor: pointer;
+    margin-bottom: 4px;
+}
 
 /*Override vendor css*/
 

@@ -26,8 +26,8 @@
                 <tr>
                     <td>
                         <div class="symbol"
-                             data-symbol="{{ i.stock }}" data-stock-id="{{ i.stock.id }}"
-                             data-tradedate="{{ i.trade_date }}">{{ i.stock }}
+                             data-symbol="{{ i.stock.symbol }}" data-stock-id="{{ i.stock.id }}"
+                             data-tradedate="{{ i.trade_date }}">{{ i.stock.symbol }}
                         </div>
                         <div class="addFadeColor"><a
                                 href="{{ i.stock.moneycontrol_link }}"
@@ -35,11 +35,11 @@
                     </td>
                     <td>{{ i.close }}</td>
                     <td>
-                        <div class="{{ i.stock }}-current-price"></div>
-                        <span class="{{ i.stock }}-today-change today-change"></span></td>
+                        <div class="{{ i.stock.symbol }}-current-price"></div>
+                        <span class="{{ i.stock.symbol }}-today-change today-change"></span></td>
                     <td>
-                        <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
-                        <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
+                        <div class="{{ i.stock.symbol }}-overall-gain" data-close="{{ i.close }}"></div>
+                        <div class="{{ i.stock.symbol }}-overall-gain-percent addFadeColor"></div>
                     </td>
                     <td>
                         <time class="timeago" datetime="{{ i.trade_date }}"></time>

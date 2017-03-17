@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 class MacdStrategy(object):
     def __init__(self):
-        self.today = date.today()
-        # self.today = date(2017, 03, 14)
+        # self.today = date.today()
+        self.today = date(2017, 03, 06)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """

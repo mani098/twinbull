@@ -35,6 +35,7 @@ $('span.add-btn').click(function () {
 });
 
 
+
 $('.remove-btn').click(function () {
     var rowId = this.dataset.rowId;
     $(this).parents('tr').remove();
@@ -104,54 +105,22 @@ if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_t
         updateStockPrice();
     }, 25000);
 }
+$('.symbol').click(function (event) {
+	var doc = document;
+    var text = this;
 
-function loadDeliverables(symbol, from_date, to_date) {
-    $("#deliveryModal .modal-title").html(symbol);
-    $.ajax({
-        url: '/api/deliverables/',
-        type: 'GET',
-        data: {symbol: symbol, trade_date: from_date, to_date: to_date},
-        success: function (data) {
-            var x = [], y_deliverables = [], y_price = [];
-            $.each(data['data'], function (index, value) {
-                x.push(value.trade_date);
-                y_deliverables.push(value.deliverables);
-                y_price.push(value.close);
-            });
-            var traceDeliverables =
-                {
-                    x: x,
-                    y: y_deliverables,
-                    name: 'Deliverables',
-                    type: 'scatter'
-                };
-            var tracePrice =
-                {
-                    x: x,
-                    y: y_price,
-                    yaxis: 'y2',
-                    name: 'Price',
-                    type: 'scatter'
-                };
-            var plotlyData = [traceDeliverables, tracePrice];
-            var layout = {
-                width: 1100,
-                height: 600,
-                yaxis: {
-                    title: 'Deliverables',
-                    titlefont: {color: '#1f77b4'},
-                    tickfont: {color: '#1f77b4'}
-                },
-                yaxis2: {
-                    title: 'Price',
-                    titlefont: {color: 'rgb(148, 103, 189)'},
-                    tickfont: {color: 'rgb(148, 103, 189)'},
-                    overlaying: 'y',
-                    side: 'right' //,
-                }
-            };
-            Plotly.newPlot("plotly-deliverables", plotlyData, layout);
-            $('#deliveryModal').modal();
-        }
-    });
-}
+    if (doc.body.createTextRange) { // ms
+        var range = doc.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    }
+    else if (window.getSelection) { // moz, opera, webkit
+       var selection = window.getSelection();
+       var range = doc.createRange();
+       range.selectNodeContents(text);
+       selection.removeAllRanges();
+       selection.addRange(range);
+    }
+    document.execCommand('copy');
+
+});
