@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 class MacdStrategy(object):
     def __init__(self):
-        # self.today = date.today()
-        self.today = date(2017, 03, 06)
+        self.today = date.today()
+        # self.today = date(2017, 03, 06)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
@@ -46,9 +46,8 @@ class MacdStrategy(object):
         prev_price_change_1 = queryset[1].close - queryset[1].open if qs_count > 1 else True
         prev_histogram_2 = histograms[0]
         prev_price_change_2 = queryset[2].close - queryset[2].open if qs_count > 2 else True
-        # if curr_stock.stock.symbol == 'AMARAJABAT':
-        #     pass
-        print curr_stock.stock.symbol, curr_stock.close, cur_histogram, prev_histogram_1, prev_histogram_2, '\t', curr_price_change, prev_price_change_1, prev_price_change_2
+        print(curr_stock.stock.symbol, curr_stock.close, cur_histogram, prev_histogram_1, prev_histogram_2, '\t',
+              curr_price_change, prev_price_change_1, prev_price_change_2)
         return (0 > cur_histogram > prev_histogram_1 > prev_histogram_2 or (prev_histogram_1 < 0 < cur_histogram)) and \
                curr_price_change > 0 and prev_price_change_1 > 0 and prev_price_change_2 > 0
 
@@ -157,7 +156,8 @@ class ProcessStrategy1(object):
                     buy_signals[signal] = data[signal]
                 prev_point = histogram
 
-        print 'Days\tBuy date\tB.price\tSell_date\tSold_at\tProf.%\tProfit'
+        print
+        'Days\tBuy date\tB.price\tSell_date\tSold_at\tProf.%\tProfit'
         n_profit = 0
         n_neutral = 0
         n_negative = 0
@@ -170,7 +170,8 @@ class ProcessStrategy1(object):
                 buy_price = StockHistory.objects.filter(stock_id=self.stock.id,
                                                         trade_date__gt=buy_date).first().open
             except AttributeError as err:
-                print err, 73
+                print
+                err, 73
                 continue
 
             bought_at = buy_price
@@ -181,7 +182,8 @@ class ProcessStrategy1(object):
                     current_open = StockHistory.objects.filter(stock_id=self.stock.id,
                                                                trade_date__gt=trade_date).first().open
                 except AttributeError as err:
-                    print err, 86
+                    print
+                    err, 86
                     continue
                 profit += current_open - buy_price
                 buy_price = current_open
@@ -195,11 +197,14 @@ class ProcessStrategy1(object):
                         n_negative += 1
                     elif profit == 0:
                         n_neutral += 1
-                    print '%s\t%s\t%.1f\t%s\t%.1f\t%.2f%%\t%.2f' % (
+                    print
+                    '%s\t%s\t%.1f\t%s\t%.1f\t%.2f%%\t%.2f' % (
                         (trade_date - buy_date).days, buy_date + timedelta(days=1), bought_at,
                         trade_date + timedelta(days=1), current_open,
                         (100 / bought_at) * profit, profit)
                     break
 
-        print "Total buy signals: %s" % total_buy_signals
-        print "Accuracy: Positive: %s\tNegative: %s\tNeutral: %s" % (n_profit, n_negative, n_neutral)
+        print
+        "Total buy signals: %s" % total_buy_signals
+        print
+        "Accuracy: Positive: %s\tNegative: %s\tNeutral: %s" % (n_profit, n_negative, n_neutral)

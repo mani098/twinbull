@@ -43,10 +43,10 @@ class StockHistoryManager(models.Manager):
 
         if stocks_history:
             StockHistory.objects.bulk_create(stocks_history)
-            print "Stocks downloaded for %s" % by_trade_date
+            print ("Stocks downloaded for %s" % by_trade_date)
         else:
             # for cron logs
-            print "[%s] No data found on NSE" % datetime.now()
+            print ("[%s] No data found on NSE" % datetime.now())
 
             logger.info("No data found on NSE")
 

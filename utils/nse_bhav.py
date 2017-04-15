@@ -56,7 +56,7 @@ class Nse(object):
             f.close()
             return self._read_zip_file(BHAV_LOCAL_PATH)
         else:
-            print "sorry!, no records available"
+            print ("sorry!, no records available")
             return []
 
     def _read_zip_file(self, filepath):

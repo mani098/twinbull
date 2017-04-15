@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-from logger_settings import LOGGING
+from .logger_settings import LOGGING
 
 log_path = '/home/pi/code/logs/twinbull.log'
 
