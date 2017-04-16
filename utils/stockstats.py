@@ -742,12 +742,12 @@ class StockDataFrame(pd.DataFrame):
         :param df: data
         :return: None
         """
-        fast = df['close_10_ema']
-        slow = df['close_22_ema']
+        fast = df['close_12_ema']
+        slow = df['close_26_ema']
         df['macd'] = fast - slow
-        df['macds'] = df['macd_7_ema']
+        df['macds'] = df['macd_9_ema']
         df['macdh'] = (df['macd'] - df['macds'])
-        del df['macd_7_ema']
+        del df['macd_9_ema']
         del fast
         del slow
 

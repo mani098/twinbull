@@ -1,4 +1,5 @@
-import requests, urllib
+import requests
+from urllib.parse import quote_plus
 from django.conf import settings
 
 
@@ -25,15 +26,16 @@ def calculate_charges(stock_price=0, quantity=0):
 
 
 def send_via_telegram(text):
+    """Send message via telegram bot"""
     base_url = settings.TELEGRAM_BASE_URL
-    kaathi_id = settings.KAATHI_TELEGRAM_ID
+    # kaathi_id = settings.KAATHI_TELEGRAM_ID
     mani_id = settings.MANI_TELEGRAM_ID
 
-    text_encode = urllib.quote_plus(text)
-    url_kaathi = base_url + kaathi_id + "&text=" + text_encode
+    text_encode = quote_plus(text)
+    # url_kaathi = base_url + kaathi_id + "&text=" + text_encode
     url_mani = base_url + mani_id + "&text=" + text_encode
 
-    resp_kaathi = requests.get(url=url_kaathi)
+    # resp_kaathi = requests.get(url=url_kaathi)
     resp_mani = requests.get(url=url_mani)
 
 
