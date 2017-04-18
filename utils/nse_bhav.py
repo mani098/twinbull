@@ -67,7 +67,7 @@ class Nse(object):
             ifile = zfile.open(finfo)
             stocks = ifile.readlines()
             for i, stock in enumerate(stocks):
-                stock_data = stock.split(',')
+                stock_data = stock.decode('UTF-8').split(',')
                 if stock_data[1] == 'EQ':
                     trade_date = datetime.strptime(stock_data[10], '%d-%b-%Y').date()
                     stock_hash = {'SYMBOL': stock_data[0],

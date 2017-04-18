@@ -1,6 +1,7 @@
 import requests
 from urllib.parse import quote_plus
 from django.conf import settings
+from datetime import date as python_date
 
 
 def calculate_charges(stock_price=0, quantity=0):
@@ -56,3 +57,10 @@ class NiftyStocks(object):
     def next_nifty(self):
         next_nifty_url = settings.NEXT_NIFTY_URL
         return self._get_from_source(next_nifty_url)
+
+
+def get_quarter_month(date):
+    """Returns the quarter's first month by the given date"""
+    quarter_month_map = {1: 1, 2: 4, 3: 6, 4: 8}
+    assert isinstance(date, python_date), "Field must be date type"
+    return quarter_month_map[((date.month - 1) // 3 + 1)]  # Eg: 1 for Jan, 4 for april

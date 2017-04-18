@@ -2,16 +2,19 @@ import logging
 from datetime import date, timedelta
 
 from stocks.models import StockHistory
-from utils.util import send_via_telegram
+from utils.util import send_via_telegram, get_quarter_month
 from .macd import Macd
 
 logger = logging.getLogger(__name__)
 
 
 class MacdStrategy(object):
+    """Don't run this strategy during the first 5 trading days of quarter,
+     if we try to run at this time then eventually the results would be wrong"""
+
     def __init__(self):
         # self.today = date.today()
-        self.today = date(2017, 3, 30)
+        self.today = date(2017, 4, 17)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
@@ -25,10 +28,26 @@ class MacdStrategy(object):
         prev_histogram = histograms[0]
         is_valid_histogram = curr_histogram >= 0 > prev_histogram
         day_change = stock_obj.close - stock_obj.open
+        day_change_percent = (100 / stock_obj.open) * day_change
 
-        if day_change > 0 and is_valid_histogram:
-            print(stock_obj.trade_date, stock_obj.stock.symbol, prev_histogram, curr_histogram, is_valid_histogram,
-                  day_change)
+        # TODO exclude this with django query
+        if day_change_percent > 5:
+            # If day's change percent is > 5% then it's not a valid buy since it fluctuate the stock price
+            return False
+
+        quarter_month = get_quarter_month(stock_obj.trade_date)
+        quarter_month_prices = StockHistory.objects.filter(stock_id=stock_obj.stock_id,
+                                                           trade_date__month=quarter_month).order_by(
+            'trade_date').values_list('close', flat=True)[:5]
+
+        if not quarter_month_prices:
+            # Check the quarterly growth
+            return False
+
+        for price in list(quarter_month_prices):
+            if stock_obj.close < price:
+                # If current price is lesser than the quarter initial price then it's not a valid buy
+                return False
 
         # day_change should be positive(Profited stock)
         # prev_histogram should be < 0 and curr_histogram should be >=0 to identify the up-trend
@@ -37,13 +56,8 @@ class MacdStrategy(object):
     def buy_signals(self):
         """Filter stocks which are eligible for buy and send the signal via telegram"""
 
-        # TODO Check whether the stock is growing in this quarter
-        # Basically filter only bullish stocks for current quarter
-
-        # TODO check for the price change, if it is very high don't send buy signal
-
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=300000,
-                                                                     watch_list=False)
+                                                                     watch_list=False, close__gte=21)
         stocks_count = stocks.count()
 
         if stocks_count == 0:
