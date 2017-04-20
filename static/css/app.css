@@ -1,5 +1,5 @@
 body {
-    background-color: hsl(0, 0%, 92%)
+    background-color: hsl(0, 0%, 98%)
 }
 
 .addFadeColor, .addFadeColor > a {
@@ -8,7 +8,7 @@ body {
 }
 
 .today-change{
-    font-size: 14px;
+    font-size: 12px;
 }
 
 span.remove-btn {
@@ -40,6 +40,10 @@ span.ok-btn {
 .symbol {
     cursor: pointer;
     margin-bottom: 4px;
+}
+.pre-loader-gif {
+    width: 10px;
+    height: 10px;
 }
 
 /*Override vendor css*/

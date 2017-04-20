@@ -58,5 +58,4 @@ def stock_quotes(request):
         symbols_str = ','.join(symbols[x:x + 5])
         data = requests.get(quotes_url + '?symbol=' + symbols_str, headers=headers).json()['data']
         results.extend(data)
-
     return JsonResponse({'data': results})

@@ -58,8 +58,9 @@ function updateStockPrice() {
 
     if (!stock_ids) return;
 
-    var stockQuotes_url = '/api/stockQuotes?stock_ids=' + stock_ids;
+    $('.ovl-gn, .ltp-gn').html('<img class="pre-loader-gif" src="/static/img/preloader.gif">');
 
+    var stockQuotes_url = '/api/stockQuotes?stock_ids=' + stock_ids;
     $.ajax({
         type: 'GET',
         contentType: "application/json; charset=utf-8",
@@ -87,11 +88,13 @@ function updateStockPrice() {
 function changePriceColor(price, domElement) {
     if (price > 0 || price == NaN) {
         domElement.css('color', '#3a6c00');
-        domElement.addClass('glyphicon').addClass('glyphicon-arrow-up');
+        domElement.prepend('<span></span>');
+        domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-up');
     }
     else {
         domElement.css('color', '#c51010');
-        domElement.addClass('glyphicon').addClass('glyphicon-arrow-down');
+        domElement.prepend('<span></span>');
+        domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-down');
     }
 }
 

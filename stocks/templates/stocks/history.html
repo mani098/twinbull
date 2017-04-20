@@ -1,5 +1,4 @@
 {% extends 'stocks/base.html' %}
-
 {% block content %}
 <div>
     <form method="post" class="form-inline" style="text-align: center;">
@@ -30,13 +29,13 @@
             <tr>
                 <td>
                     {% if i.is_filtered %}
-                    <div class="symbol" data-target="#deliveryModal"
+                    <div class="symbol"
                          data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}">
                         {{ i.stock }}
                     </div>
 
                     {% else %}
-                    <div class="symbol" data-target="#deliveryModal"
+                    <div class="symbol"
                          data-symbol="{{ i.stock }}" data-tradedate="{{ i.trade_date }}" style="color:red">
                         {{ i.stock }}
                     </div>
@@ -55,7 +54,7 @@
                     <div class="{{ i.stock }}-current-price"></div>
                     <span class="{{ i.stock }}-today-change today-change"></span></td>
                 <td>
-                    <div class="{{ i.stock }}-overall-gain" data-close="{{ i.close }}"></div>
+                    <div class="{{ i.stock }}-overall-gain ovl-gn" data-close="{{ i.close }}"></div>
                     <div class="{{ i.stock }}-overall-gain-percent addFadeColor"></div>
                 </td>
                 <td>

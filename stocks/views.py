@@ -12,7 +12,7 @@ class IndexView(View):
 
     def get(self, request):
         _trade_date = request.GET.get('trade-date')
-        trade_date = datetime.strptime(_trade_date, '%m/%d/%Y').date() if _trade_date else  StockHistory.objects.filter(
+        trade_date = datetime.strptime(_trade_date, '%m/%d/%Y').date() if _trade_date else StockHistory.objects.filter(
             watch_list=True).latest('trade_date').trade_date
         stock_history = StockHistory.objects.select_related('stock').filter(watch_list=True, trade_date=trade_date)
 
