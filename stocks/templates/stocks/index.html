@@ -14,6 +14,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th class="tbl-heading">Company</th>
                 <th class="tbl-heading">Symbol</th>
                 <th class="tbl-heading" style="width: 100px">Avg. Price</th>
                 <th class="tbl-heading">LTP</th>
@@ -25,6 +26,7 @@
             <tbody>
             {% for i in stocks %}
                 <tr>
+                    <td class="org-name" data-company-id="{{ i.stock.symbol }}"></td>
                     <td>
                         <div class="symbol"
                              data-symbol="{{ i.stock.symbol }}" data-stock-id="{{ i.stock.id }}"
@@ -43,7 +45,7 @@
                         <div class="{{ i.stock.symbol }}-overall-gain-percent addFadeColor"></div>
                     </td>
                     <td>
-{#                        <time class="timeago" datetime="{{ i.trade_date }}"></time>#}
+                        {#                        <time class="timeago" datetime="{{ i.trade_date }}"></time>#}
                         <div class="timeago">{{ i.trade_date }}</div>
                     </td>
                     <td>{{ i.comments }}</td>

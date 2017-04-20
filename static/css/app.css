@@ -2,7 +2,7 @@ body {
     background-color: #000;
 }
 
-.tbl-heading, .avg-price, .ltp-gn, .ovl-gn, .timeago {
+.tbl-heading, .avg-price, .ltp-gn, .ovl-gn, .timeago, .org-name {
     color: #7e7e7e;
 }
 
@@ -12,7 +12,7 @@ body {
 }
 
 .today-change {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 span.remove-btn {
@@ -40,7 +40,7 @@ span.ok-btn {
 }
 
 .stock-container {
-    margin: 40px 100px 0 100px;
+    margin: 40px 0;
 }
 
 .symbol {

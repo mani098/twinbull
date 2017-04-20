@@ -1,7 +1,7 @@
 $(function () {
     // Update the current stock price after DOM loaded
     updateStockPrice();
-    
+
     $("#datepicker").datepicker();
 });
 
@@ -44,7 +44,7 @@ function updateStockPrice() {
 
     if (!stock_ids) return;
 
-    $('.ovl-gn, .ltp-gn').html('<img class="pre-loader-gif" src="/static/img/pre-loader.gif">');
+    $('.ovl-gn, .ltp-gn, .org-name').html('<img class="pre-loader-gif" src="/static/img/pre-loader.gif">');
 
     var stockQuotes_url = '/api/stockQuotes?stock_ids=' + stock_ids;
     $.ajax({
@@ -56,9 +56,13 @@ function updateStockPrice() {
                 var lastPrice = value['lastPrice'].replace(',', '');
                 var symbol = value['symbol'];
                 $("." + symbol + '-current-price').text(lastPrice);
+
+                // Add company name
+                $('td[data-company-id=' + symbol + ']').text(value['companyName']);
+
                 var todayChangeSpan = $('.' + symbol + '-today-change'),
                     todayChangePrice = parseFloat(value.change);
-                todayChangeSpan.text(todayChangePrice);
+                todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
                 changePriceColor(todayChangePrice, todayChangeSpan);
                 var overallGainDiv = $("." + symbol + '-overall-gain');
                 var overallGainPrice = lastPrice - overallGainDiv.attr('data-close');
@@ -74,13 +78,13 @@ function updateStockPrice() {
 function changePriceColor(price, domElement) {
     if (price > 0 || price === NaN) {
         domElement.css('color', '#00cc00');
-        domElement.prepend('<span></span>');
-        domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-up');
+        // domElement.prepend('<span></span>');
+        // domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-up');
     }
     else {
         domElement.css('color', '#ff0000');
-        domElement.prepend('<span></span>');
-        domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-down');
+        // domElement.prepend('<span></span>');
+        // domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-down');
     }
 }
 
