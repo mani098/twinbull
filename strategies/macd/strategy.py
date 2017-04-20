@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from stocks.models import StockHistory
 from utils.util import send_via_telegram, get_quarter_month
 from .macd import Macd
+from django.db.models import F
 
 logger = logging.getLogger(__name__)
 
@@ -14,12 +15,13 @@ class MacdStrategy(object):
 
     def __init__(self):
         # self.today = date.today()
-        self.today = date(2017, 4, 17)
+        self.today = date(2017, 4, 19)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
         assert signal_type, "signal_type is required"
         signal_method = '{}_signals'.format(signal_type)
+        logger.info("Running {} for trade date: {}".format(signal_type, self.today))
         getattr(self, signal_method)()
 
     def is_valid_buy(self, stock_obj, histograms):
@@ -27,37 +29,37 @@ class MacdStrategy(object):
         curr_histogram = histograms[1]
         prev_histogram = histograms[0]
         is_valid_histogram = curr_histogram >= 0 > prev_histogram
-        day_change = stock_obj.close - stock_obj.open
-        day_change_percent = (100 / stock_obj.open) * day_change
-
-        # TODO exclude this with django query
-        if day_change_percent > 5:
-            # If day's change percent is > 5% then it's not a valid buy since it fluctuate the stock price
-            return False
 
         quarter_month = get_quarter_month(stock_obj.trade_date)
-        quarter_month_prices = StockHistory.objects.filter(stock_id=stock_obj.stock_id,
-                                                           trade_date__month=quarter_month).order_by(
-            'trade_date').values_list('close', flat=True)[:5]
+        quarter_prices = StockHistory.objects. \
+                                   filter(stock_id=stock_obj.stock_id, trade_date__month=quarter_month,
+                                          trade_date__year=stock_obj.trade_date.year). \
+                                   order_by('trade_date').values_list('close', flat=True)[:5]
 
-        if not quarter_month_prices:
+        if not quarter_prices:
             # Check the quarterly growth
             return False
 
-        for price in list(quarter_month_prices):
+        is_valid_quarter = True
+        for price in list(quarter_prices):
+            # if stock_obj.stock.symbol == 'TATAMTRDVR':
+            #     import ipdb;
+            #     ipdb.set_trace()
             if stock_obj.close < price:
                 # If current price is lesser than the quarter initial price then it's not a valid buy
-                return False
+                is_valid_quarter = False
+                break
 
-        # day_change should be positive(Profited stock)
         # prev_histogram should be < 0 and curr_histogram should be >=0 to identify the up-trend
-        return day_change > 0 and is_valid_histogram
+        return is_valid_quarter and is_valid_histogram
 
     def buy_signals(self):
         """Filter stocks which are eligible for buy and send the signal via telegram"""
 
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=300000,
-                                                                     watch_list=False, close__gte=21)
+                                                                     watch_list=False, close__gte=21). \
+            annotate(day_change_percent=(100 / F('open') * (F('close') - F('open')))).filter(day_change_percent__lt=5,
+                                                                                             day_change_percent__gt=0)
         stocks_count = stocks.count()
 
         if stocks_count == 0:
