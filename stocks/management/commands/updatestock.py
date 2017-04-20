@@ -19,5 +19,5 @@ class Command(BaseCommand):
             print (trade_date)
 
     def handle(self, *args, **options):
-        # StockHistory.objects.update_stocks()
-        self.run_this()
+        StockHistory.objects.update_stocks()
+        # self.run_this()

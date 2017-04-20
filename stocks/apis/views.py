@@ -6,7 +6,7 @@ from stocks.models import StockHistory
 
 class Stockapiview(viewsets.ViewSet):
     def list(self, request):
-        queryset = StockHistory.objects.filter(watch_list=1)
+        queryset = StockHistory.objects.filter(watch_list=True)
         serializer_class = StockSerializer(queryset, many=True)
 
         query = request.GET.get("trade_date")
