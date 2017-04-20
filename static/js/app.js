@@ -35,7 +35,6 @@ $('span.add-btn').click(function () {
 });
 
 
-
 $('.remove-btn').click(function () {
     var rowId = this.dataset.rowId;
     $(this).parents('tr').remove();
@@ -67,15 +66,15 @@ function updateStockPrice() {
         url: stockQuotes_url,
         success: function (data) {
             $.each(data['data'], function (index, value) {
-                var lastPrice = value.lastPrice;
-                var symbol = value.symbol
+                var lastPrice = value['lastPrice'].replace(',', '');
+                var symbol = value['symbol'];
                 $("." + symbol + '-current-price').text(lastPrice);
                 var todayChangeSpan = $('.' + symbol + '-today-change'),
                     todayChangePrice = parseFloat(value.change);
                 todayChangeSpan.text(todayChangePrice);
                 changePriceColor(todayChangePrice, todayChangeSpan);
                 var overallGainDiv = $("." + symbol + '-overall-gain');
-                var overallGainPrice = (lastPrice) - overallGainDiv.attr('data-close');
+                var overallGainPrice = lastPrice - overallGainDiv.attr('data-close');
                 var overallGainPercent = overallGainPrice / (overallGainDiv.attr('data-close') / 100);
                 $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + '%)');
                 overallGainDiv.text(overallGainPrice.toFixed(2));
@@ -106,7 +105,7 @@ if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_t
     }, 25000);
 }
 $('.symbol').click(function (event) {
-	var doc = document;
+    var doc = document;
     var text = this;
 
     if (doc.body.createTextRange) { // ms
@@ -115,11 +114,11 @@ $('.symbol').click(function (event) {
         range.select();
     }
     else if (window.getSelection) { // moz, opera, webkit
-       var selection = window.getSelection();
-       var range = doc.createRange();
-       range.selectNodeContents(text);
-       selection.removeAllRanges();
-       selection.addRange(range);
+        var selection = window.getSelection();
+        var range = doc.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
     }
     document.execCommand('copy');
 

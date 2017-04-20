@@ -15,7 +15,7 @@ class MacdStrategy(object):
 
     def __init__(self):
         # self.today = date.today()
-        self.today = date(2017, 4, 19)
+        self.today = date(2017, 4, 10)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
