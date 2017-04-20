@@ -1,13 +1,17 @@
 body {
-    background-color: hsl(0, 0%, 98%)
+    background-color: #000;
+}
+
+.tbl-heading, .avg-price, .ltp-gn, .ovl-gn, .timeago {
+    color: #7e7e7e;
 }
 
 .addFadeColor, .addFadeColor > a {
-    color: #666666;
+    color: #7e7e7e;
     font-size: 11px;
 }
 
-.today-change{
+.today-change {
     font-size: 12px;
 }
 
@@ -21,6 +25,7 @@ span.remove-btn {
 tr:hover span.remove-btn {
     visibility: visible;
 }
+
 span.add-btn {
     margin-left: 30%;
     margin-top: 13%;
@@ -37,22 +42,48 @@ span.ok-btn {
 .stock-container {
     margin: 20px 100px 0 100px;
 }
+
 .symbol {
     cursor: pointer;
     margin-bottom: 4px;
+    color: #00cc00;
 }
+
 .pre-loader-gif {
-    width: 10px;
-    height: 10px;
+    width: 15px;
+    height: 15px;
+}
+
+.filter-date {
+    background-color: #c8c8c8;
+    color: #464646;
+    border: 1px solid #464646;
 }
 
 /*Override vendor css*/
 
 /*.modal-dialog {*/
-    /*max-height: 900px;*/
-    /*width: 1200px;*/
+/*max-height: 900px;*/
+/*width: 1200px;*/
 /*}*/
 
 .timeago {
     text-transform: capitalize;
+}
+
+.table > tbody > tr > td {
+    border-top: 0;
+}
+
+.table > thead > tr > th {
+    border-bottom: 1px solid #7e7e7e;
+}
+
+.container-fluid {
+    background-color: #000;
+    border-bottom: 1px solid #7e7e7e;
+}
+
+.form-control {
+    border-radius: 1px;
 }

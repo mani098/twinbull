@@ -1,7 +1,7 @@
 $(function () {
     // Update the current stock price after DOM loaded
     updateStockPrice();
-    $("time.timeago").timeago();
+    // $("time.timeago").timeago();
 
     // $('.symbol').click(function (e) {
     //     e.preventDefault();
@@ -58,7 +58,7 @@ function updateStockPrice() {
 
     if (!stock_ids) return;
 
-    $('.ovl-gn, .ltp-gn').html('<img class="pre-loader-gif" src="/static/img/preloader.gif">');
+    $('.ovl-gn, .ltp-gn').html('<img class="pre-loader-gif" src="/static/img/pre-loader.gif">');
 
     var stockQuotes_url = '/api/stockQuotes?stock_ids=' + stock_ids;
     $.ajax({
@@ -86,13 +86,13 @@ function updateStockPrice() {
 }
 
 function changePriceColor(price, domElement) {
-    if (price > 0 || price == NaN) {
-        domElement.css('color', '#3a6c00');
+    if (price > 0 || price === NaN) {
+        domElement.css('color', '#00cc00');
         domElement.prepend('<span></span>');
         domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-up');
     }
     else {
-        domElement.css('color', '#c51010');
+        domElement.css('color', '#ff0000');
         domElement.prepend('<span></span>');
         domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-down');
     }

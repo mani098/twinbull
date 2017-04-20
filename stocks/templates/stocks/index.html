@@ -3,22 +3,23 @@
 {% block content %}
     <div>
         <form method="get" class="form-inline" style="text-align: center;">
-{#            {% csrf_token %}#}
-{#            <input id="symbol-tag" name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>#}
-            <input name="trade-date" placeholder="03/22/2017" type="text" id="datepicker" class="form-control"/>
-            <button type="submit" class="form-control">Search</button>
+            {#            {% csrf_token %}#}
+            {#            <input id="symbol-tag" name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>#}
+            <input name="trade-date" placeholder="03/22/2017" type="text" id="datepicker" class="form-control"
+                   autocomplete="off"/>
+            <button type="submit" class="form-control filter-date">Search</button>
         </form>
     </div>
     <div class="stock-container">
-        <table class="table table-hover">
+        <table class="table">
             <thead>
             <tr>
-                <th>Symbol</th>
-                <th style="width: 100px">Avg. Price</th>
-                <th>LTP</th>
-                <th style="width: 100px">Overall Gain</th>
-                <th style="width: 150px">Trade date</th>
-                <th>Comments</th>
+                <th class="tbl-heading">Symbol</th>
+                <th class="tbl-heading" style="width: 100px">Avg. Price</th>
+                <th class="tbl-heading">LTP</th>
+                <th class="tbl-heading" style="width: 100px">Overall Gain</th>
+                <th class="tbl-heading" style="width: 150px">Trade date</th>
+                <th class="tbl-heading">Comments</th>
             </tr>
             </thead>
             <tbody>
@@ -33,7 +34,7 @@
                                 href="{{ i.stock.moneycontrol_link }}"
                                 target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
                     </td>
-                    <td>{{ i.close }}</td>
+                    <td class="avg-price">{{ i.close }}</td>
                     <td>
                         <div class="{{ i.stock.symbol }}-current-price ltp-gn"></div>
                         <span class="{{ i.stock.symbol }}-today-change today-change"></span></td>
@@ -42,8 +43,8 @@
                         <div class="{{ i.stock.symbol }}-overall-gain-percent addFadeColor"></div>
                     </td>
                     <td>
-                        <time class="timeago" datetime="{{ i.trade_date }}"></time>
-                        <div class="addFadeColor">({{ i.trade_date }})</div>
+{#                        <time class="timeago" datetime="{{ i.trade_date }}"></time>#}
+                        <div class="timeago">{{ i.trade_date }}</div>
                     </td>
                     <td>{{ i.comments }}</td>
                     <td><span class="glyphicon glyphicon-remove remove-btn" data-row-id="{{ i.id }}"></span></td>
