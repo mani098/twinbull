@@ -107,15 +107,16 @@ if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_t
 $('.symbol').click(function (event) {
     var doc = document;
     var text = this;
+    var range;
 
     if (doc.body.createTextRange) { // ms
-        var range = doc.body.createTextRange();
+        range = doc.body.createTextRange();
         range.moveToElementText(text);
         range.select();
     }
     else if (window.getSelection) { // moz, opera, webkit
         var selection = window.getSelection();
-        var range = doc.createRange();
+        range = doc.createRange();
         range.selectNodeContents(text);
         selection.removeAllRanges();
         selection.addRange(range);
