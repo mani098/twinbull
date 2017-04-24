@@ -14,8 +14,8 @@ class MacdStrategy(object):
      if we try to run at this time then eventually the results would be wrong"""
 
     def __init__(self):
-        self.today = date.today()
-        # self.today = date(2017, 4, 10)
+        # self.today = date.today()
+        self.today = date(2017, 4, 6)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """

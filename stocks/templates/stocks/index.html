@@ -17,6 +17,7 @@
                 <th class="tbl-heading">Company</th>
                 <th class="tbl-heading">Symbol</th>
                 <th class="tbl-heading" style="width: 100px">Avg. Price</th>
+                <th class="tbl-heading">Target / StopLoss</th>
                 <th class="tbl-heading">LTP</th>
                 <th class="tbl-heading" style="width: 100px">Overall Gain</th>
                 <th class="tbl-heading" style="width: 150px">Trade date</th>
@@ -37,6 +38,10 @@
                                 target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
                     </td>
                     <td class="avg-price">{{ i.close }}</td>
+                    <td>
+                        <span class="{{ i.stock.symbol }}-trg-price trg-price"></span> /
+                        <span class="{{ i.stock.symbol }}-stop-loss-price stop-loss-price"></span>
+                    </td>
                     <td>
                         <div class="{{ i.stock.symbol }}-current-price ltp-gn"></div>
                         <span class="{{ i.stock.symbol }}-today-change today-change"></span></td>

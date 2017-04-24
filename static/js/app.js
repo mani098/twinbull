@@ -65,8 +65,15 @@ function updateStockPrice() {
                 todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
                 changePriceColor(todayChangePrice, todayChangeSpan);
                 var overallGainDiv = $("." + symbol + '-overall-gain');
-                var overallGainPrice = lastPrice - overallGainDiv.attr('data-close');
-                var overallGainPercent = overallGainPrice / (overallGainDiv.attr('data-close') / 100);
+                var avgClosePrice = overallGainDiv.attr('data-close');
+                var overallGainPrice = lastPrice - avgClosePrice;
+                var overallGainPercent = overallGainPrice / (avgClosePrice / 100);
+
+                var predictedprice = getTargetStopLoss(avgClosePrice);
+                $('.' + symbol + '-trg-price').text(predictedprice.target);
+                $('.' + symbol + '-stop-loss-price').text(predictedprice.stopLoss);
+
+
                 $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + '%)');
                 overallGainDiv.text(overallGainPrice.toFixed(2));
                 changePriceColor(overallGainPrice, overallGainDiv);
@@ -117,3 +124,9 @@ $('.symbol').click(function (event) {
     document.execCommand('copy');
 
 });
+
+function getTargetStopLoss(price) {
+    var targetPrice = parseFloat(price) + parseFloat((price / 100) * 3); // +3% target
+    var stopLoss = parseFloat(price) + parseFloat((price / 100) * -2); // -2% stopLoss
+    return {target: targetPrice.toFixed(1), stopLoss: stopLoss.toFixed(1)};
+}

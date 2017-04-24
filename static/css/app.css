@@ -1,8 +1,5 @@
 body {
     background-color: #000;
-}
-
-.tbl-heading, .avg-price, .ltp-gn, .ovl-gn, .timeago, .org-name {
     color: #7e7e7e;
 }
 
@@ -49,6 +46,13 @@ span.ok-btn {
     color: #00cc00;
 }
 
+.trg-price {
+    color: #00cc00;
+}
+.stop-loss-price {
+    color: #ff0000;
+}
+
 .pre-loader-gif {
     width: 15px;
     height: 15px;
@@ -75,7 +79,7 @@ span.ok-btn {
     border-top: 0;
 }
 
-.table > thead > tr > th {
+.table > thead > tr > th, .table > thead {
     border-bottom: 1px solid #7e7e7e;
 }
 
