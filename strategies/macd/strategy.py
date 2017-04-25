@@ -15,7 +15,7 @@ class MacdStrategy(object):
 
     def __init__(self):
         # self.today = date.today()
-        self.today = date(2017, 4, 6)
+        self.today = date(2017, 4, 24)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
@@ -32,9 +32,9 @@ class MacdStrategy(object):
 
         quarter_month = get_quarter_month(stock_obj.trade_date)
         quarter_prices = StockHistory.objects. \
-                                   filter(stock_id=stock_obj.stock_id, trade_date__month=quarter_month,
-                                          trade_date__year=stock_obj.trade_date.year). \
-                                   order_by('trade_date').values_list('close', flat=True)[:5]
+                             filter(stock_id=stock_obj.stock_id, trade_date__month=quarter_month,
+                                    trade_date__year=stock_obj.trade_date.year). \
+                             order_by('trade_date').values_list('close', flat=True)[:5]
 
         if not quarter_prices:
             # Check the quarterly growth
@@ -59,7 +59,8 @@ class MacdStrategy(object):
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=300000,
                                                                      watch_list=False, close__gte=21). \
             annotate(day_change_percent=(100 / F('open') * (F('close') - F('open')))).filter(day_change_percent__lt=5,
-                                                                                             day_change_percent__gt=0)
+                                                                                             day_change_percent__gt=0). \
+            exclude(stock__symbol='LIQUIDBEES')
         stocks_count = stocks.count()
 
         if stocks_count == 0:

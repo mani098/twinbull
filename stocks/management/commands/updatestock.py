@@ -8,8 +8,8 @@ from stocks.models import StockHistory
 class Command(BaseCommand):
     def run_this(self):
 
-        d1 = date(2017, 4, 19)
-        d2 = date(2017, 4, 19)
+        d1 = date(2017, 4, 24)
+        d2 = date(2017, 4, 24)
 
         delta = d2 - d1
 
@@ -19,5 +19,5 @@ class Command(BaseCommand):
             print (trade_date)
 
     def handle(self, *args, **options):
-        StockHistory.objects.update_stocks()
-        # self.run_this()
+        # StockHistory.objects.update_stocks()
+        self.run_this()

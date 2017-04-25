@@ -99,10 +99,10 @@ var today_date_time = new Date();
 var today_day = today_date_time.getDay();
 var present_time = today_date_time.getHours();
 
-if (((today_day != 0) && (today_day != 6)) && ((present_time < 16) && (present_time > 9))) {
+if (((today_day !== 0) && (today_day !== 6)) && (9 < present_time < 16)) {
     setInterval(function () {
         updateStockPrice();
-    }, 25000);
+    }, 1000 * 60);
 }
 $('.symbol').click(function (event) {
     var doc = document;

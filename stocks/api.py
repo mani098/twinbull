@@ -25,7 +25,7 @@ def deliverable_api(request):
 
 @csrf_exempt
 def watchlist_remove(request):
-    history_id = json.loads(request.body).get('row_id')
+    history_id = json.loads(request.body.decode('utf-8')).get('row_id')
     stock_qs = StockHistory.objects.filter(id=history_id)
     stock_qs.update(watch_list=False)
     return JsonResponse({})

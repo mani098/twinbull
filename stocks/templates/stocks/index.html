@@ -3,8 +3,6 @@
 {% block content %}
     <div>
         <form method="get" class="form-inline" style="text-align: center;">
-            {#            {% csrf_token %}#}
-            {#            <input id="symbol-tag" name="stock_symbol" type="text" class="form-control" placeholder="SYMBOL"/>#}
             <input name="trade-date" placeholder="03/22/2017" type="text" id="datepicker" class="form-control"
                    autocomplete="off"/>
             <button type="submit" class="form-control filter-date">Search</button>
@@ -17,9 +15,9 @@
                 <th class="tbl-heading">Company</th>
                 <th class="tbl-heading">Symbol</th>
                 <th class="tbl-heading" style="width: 100px">Avg. Price</th>
-                <th class="tbl-heading">Target / StopLoss</th>
                 <th class="tbl-heading">LTP</th>
                 <th class="tbl-heading" style="width: 100px">Overall Gain</th>
+                <th class="tbl-heading">Target / StopLoss</th>
                 <th class="tbl-heading" style="width: 150px">Trade date</th>
                 <th class="tbl-heading">Comments</th>
             </tr>
@@ -39,10 +37,6 @@
                     </td>
                     <td class="avg-price">{{ i.close }}</td>
                     <td>
-                        <span class="{{ i.stock.symbol }}-trg-price trg-price"></span> /
-                        <span class="{{ i.stock.symbol }}-stop-loss-price stop-loss-price"></span>
-                    </td>
-                    <td>
                         <div class="{{ i.stock.symbol }}-current-price ltp-gn"></div>
                         <span class="{{ i.stock.symbol }}-today-change today-change"></span></td>
                     <td>
@@ -50,7 +44,10 @@
                         <div class="{{ i.stock.symbol }}-overall-gain-percent addFadeColor"></div>
                     </td>
                     <td>
-                        {#                        <time class="timeago" datetime="{{ i.trade_date }}"></time>#}
+                        <span class="{{ i.stock.symbol }}-trg-price trg-price"></span> /
+                        <span class="{{ i.stock.symbol }}-stop-loss-price stop-loss-price"></span>
+                    </td>
+                    <td>
                         <div class="timeago">{{ i.trade_date }}</div>
                     </td>
                     <td>{{ i.comments }}</td>
