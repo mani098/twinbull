@@ -5,6 +5,16 @@ $(function () {
     $("#datepicker").datepicker();
 });
 
+var today_date_time = new Date();
+var today_day = today_date_time.getDay();
+var present_time = today_date_time.getHours();
+
+if (((today_day !== 0) && (today_day !== 6)) && (9 < present_time < 16)) {
+    setInterval(function () {
+        updateStockPrice();
+    }, 1000 * 60);
+}
+
 $('span.add-btn').click(function () {
     var rowId = this.dataset.rowId;
     var comment = document.getElementById(rowId).value;
@@ -52,58 +62,62 @@ function updateStockPrice() {
         contentType: "application/json; charset=utf-8",
         url: stockQuotes_url,
         success: function (data) {
-            $.each(data['data'], function (index, value) {
-                var lastPrice = value['lastPrice'].replace(',', '');
-                var symbol = value['symbol'];
-                $("." + symbol + '-current-price').text(lastPrice);
-
-                // Add company name
-                $('td[data-company-id=' + symbol + ']').text(value['companyName']);
-
-                var todayChangeSpan = $('.' + symbol + '-today-change'),
-                    todayChangePrice = parseFloat(value.change);
-                todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
-                changePriceColor(todayChangePrice, todayChangeSpan);
-                var overallGainDiv = $("." + symbol + '-overall-gain');
-                var avgClosePrice = overallGainDiv.attr('data-close');
-                var overallGainPrice = lastPrice - avgClosePrice;
-                var overallGainPercent = overallGainPrice / (avgClosePrice / 100);
-
-                var predictedprice = getTargetStopLoss(avgClosePrice);
-                $('.' + symbol + '-trg-price').text(predictedprice.target);
-                $('.' + symbol + '-stop-loss-price').text(predictedprice.stopLoss);
-
-
-                $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent.toFixed(2) + '%)');
-                overallGainDiv.text(overallGainPrice.toFixed(2));
-                changePriceColor(overallGainPrice, overallGainDiv);
-            });
+            renderStockDetails(data);
         }
     });
 }
 
+function renderStockDetails(data) {
+    var avgGainPercent = 0;
+    var avgGain = 0;
+    $.each(data['data'], function (index, value) {
+        var lastPrice = value['lastPrice'].replace(',', '');
+        var symbol = value['symbol'];
+        $("." + symbol + '-current-price').text(lastPrice);
+
+        // Add company name
+        $('td[data-company-id=' + symbol + ']').text(value['companyName']);
+
+        var todayChangeSpan = $('.' + symbol + '-today-change'),
+            todayChangePrice = parseFloat(value.change);
+        todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
+        changePriceColor(todayChangePrice, todayChangeSpan);
+        var overallGainDiv = $("." + symbol + '-overall-gain');
+        var avgClosePrice = overallGainDiv.attr('data-close');
+        var overallGainPrice = toFloat(lastPrice - avgClosePrice);
+        avgGain += overallGainPrice;
+        var overallGainPercent = toFloat(overallGainPrice / (avgClosePrice / 100));
+        avgGainPercent += overallGainPercent;
+
+        var predictedPrice = getTargetStopLoss(avgClosePrice);
+
+        $('.' + symbol + '-trg-price').text(predictedPrice.target);
+        $('.' + symbol + '-stop-loss-price').text(predictedPrice.stopLoss);
+        $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent + '%)');
+        overallGainDiv.text(overallGainPrice);
+        changePriceColor(overallGainPrice, overallGainDiv);
+    });
+    var $avgGainPrt = $('.avg-gain-prt');
+    var $avgGain = $('.avg-gain');
+    $avgGainPrt.text(toFloat(avgGainPercent) + '%');
+    $avgGain.text(toFloat(avgGain));
+    changePriceColor(avgGainPercent, $avgGainPrt);
+    changePriceColor(avgGain, $avgGain);
+}
+
 function changePriceColor(price, domElement) {
-    if (price > 0 || price === NaN) {
+    if (price > 0 || !price) {
         domElement.css('color', '#00cc00');
-        // domElement.prepend('<span></span>');
-        // domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-up');
     }
     else {
         domElement.css('color', '#ff0000');
-        // domElement.prepend('<span></span>');
-        // domElement.find('span').addClass('glyphicon').addClass('glyphicon-arrow-down');
     }
 }
 
-var today_date_time = new Date();
-var today_day = today_date_time.getDay();
-var present_time = today_date_time.getHours();
-
-if (((today_day !== 0) && (today_day !== 6)) && (9 < present_time < 16)) {
-    setInterval(function () {
-        updateStockPrice();
-    }, 1000 * 60);
+function toFloat(n) {
+    return parseFloat(n.toFixed(2));
 }
+
 $('.symbol').click(function (event) {
     var doc = document;
     var text = this;
