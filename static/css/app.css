@@ -8,6 +8,10 @@ body {
     font-size: 11px;
 }
 
+.avg-inst-dtl {
+    margin-bottom: 10px;
+}
+
 .today-change {
     font-size: 11px;
 }
@@ -49,6 +53,7 @@ span.ok-btn {
 .trg-price {
     color: #00cc00;
 }
+
 .stop-loss-price {
     color: #ff0000;
 }

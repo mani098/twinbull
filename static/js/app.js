@@ -9,7 +9,7 @@ var today_date_time = new Date();
 var today_day = today_date_time.getDay();
 var present_time = today_date_time.getHours();
 
-if (((today_day !== 0) && (today_day !== 6)) && (9 < present_time < 16)) {
+if (((today_day !== 0) && (today_day !== 6)) && (16 > present_time > 9)) {
     setInterval(function () {
         updateStockPrice();
     }, 1000 * 60);
@@ -68,8 +68,9 @@ function updateStockPrice() {
 }
 
 function renderStockDetails(data) {
-    var avgGainPercent = 0;
     var avgGain = 0;
+    var totalStockClosePrice = 0;
+    var avgLastPrice = 0;
     $.each(data['data'], function (index, value) {
         var lastPrice = value['lastPrice'].replace(',', '');
         var symbol = value['symbol'];
@@ -83,24 +84,26 @@ function renderStockDetails(data) {
         todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
         changePriceColor(todayChangePrice, todayChangeSpan);
         var overallGainDiv = $("." + symbol + '-overall-gain');
-        var avgClosePrice = overallGainDiv.attr('data-close');
+        var avgClosePrice = toFloat(overallGainDiv.attr('data-close'));
         var overallGainPrice = toFloat(lastPrice - avgClosePrice);
-        avgGain += overallGainPrice;
         var overallGainPercent = toFloat(overallGainPrice / (avgClosePrice / 100));
-        avgGainPercent += overallGainPercent;
+        avgLastPrice += toFloat(lastPrice);
+        avgGain += toFloat(overallGainPrice);
+        totalStockClosePrice += avgClosePrice;
 
         var predictedPrice = getTargetStopLoss(avgClosePrice);
-
         $('.' + symbol + '-trg-price').text(predictedPrice.target);
         $('.' + symbol + '-stop-loss-price').text(predictedPrice.stopLoss);
         $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent + '%)');
         overallGainDiv.text(overallGainPrice);
         changePriceColor(overallGainPrice, overallGainDiv);
     });
+    var avgGainPercent = (100 / totalStockClosePrice * (avgLastPrice - totalStockClosePrice));
     var $avgGainPrt = $('.avg-gain-prt');
     var $avgGain = $('.avg-gain');
     $avgGainPrt.text(toFloat(avgGainPercent) + '%');
     $avgGain.text(toFloat(avgGain));
+    $('.tot-inst-price').text(toFloat(totalStockClosePrice));
     changePriceColor(avgGainPercent, $avgGainPrt);
     changePriceColor(avgGain, $avgGain);
 }
@@ -115,7 +118,8 @@ function changePriceColor(price, domElement) {
 }
 
 function toFloat(n) {
-    return parseFloat(n.toFixed(2));
+    var tmp = parseFloat(n);
+    return parseFloat(tmp.toFixed(2));
 }
 
 $('.symbol').click(function (event) {

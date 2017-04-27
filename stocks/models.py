@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class Stock(models.Model):
-    symbol = models.CharField(max_length=100, verbose_name="Symbol")
+    symbol = models.CharField(max_length=100, verbose_name="Symbol", db_index=True)
     isin = models.CharField(max_length=30, verbose_name="ISIN")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Stock created at")
     moneycontrol_link = models.TextField(verbose_name='MoneyControl.com', null=True, default=None, blank=True)
@@ -54,7 +54,7 @@ class StockHistoryManager(models.Manager):
 class StockHistory(models.Model):
     stock = models.ForeignKey(Stock, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    trade_date = models.DateField(verbose_name="Traded date")
+    trade_date = models.DateField(verbose_name="Traded date", db_index=True)
     open = models.FloatField(verbose_name="Open price")
     high = models.FloatField(verbose_name="High price")
     low = models.FloatField(verbose_name="Low price")
