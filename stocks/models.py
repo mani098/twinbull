@@ -73,14 +73,16 @@ class StockHistory(models.Model):
 
 
 class StockOrder(models.Model):
-    order_choices = ((1, 'BOUGHT'),
-                     (2, 'SOLD'))
+    BOUGHT = 1
+    SOLD = 2
+    order_choices = ((BOUGHT, 'BOUGHT'),
+                     (SOLD, 'SOLD'))
 
-    stock_history = models.ForeignKey(StockHistory, db_index=True)
+    stock_history = models.ForeignKey(StockHistory, db_index=True, unique=True)
     status = models.PositiveSmallIntegerField(choices=order_choices, default=1)
     sold_at = models.DateTimeField(verbose_name='Sold at', db_index=True, null=True)
     sold_price = models.FloatField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return 'Order ID: %d - Stock: %s' % (self.id, self.stock_history.stock.symbol)

@@ -1,7 +1,7 @@
 import logging
 from datetime import date, timedelta
 
-from stocks.models import StockHistory
+from stocks.models import StockHistory, StockOrder
 from utils.util import send_via_telegram, get_quarter_month
 from .macd import Macd
 from django.db.models import F
@@ -52,12 +52,12 @@ class MacdStrategy(object):
 
     def buy_signals(self):
         """Filter stocks which are eligible for buy and send the signal via telegram"""
-
+        existing_orders = StockOrder.objects.filter(status=StockOrder.BOUGHT).values_list('stock_history_id', flat=True)
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=300000,
-                                                                     watch_list=False, close__gte=21). \
+                                                                     close__gte=21). \
             annotate(day_change_percent=(100 / F('open') * (F('close') - F('open')))).filter(day_change_percent__lt=5,
                                                                                              day_change_percent__gt=0). \
-            exclude(stock__symbol='LIQUIDBEES')
+            exclude(stock__symbol='LIQUIDBEES', id__in=existing_orders)
         stocks_count = stocks.count()
 
         if stocks_count == 0:
@@ -80,8 +80,9 @@ class MacdStrategy(object):
 
             if self.is_valid_buy(stock_obj=stock, histograms=histograms):
                 stock_history_obj = stocks.get(stock_id=stock.stock_id, trade_date=self.today)
-                stock_history_obj.watch_list = True
-                stock_history_obj.save(update_fields=['watch_list'])
+
+                # Create a record in StockOrder table, default status would be BOUGHT
+                StockOrder.objects.create(stock_history_id=stock_history_obj.id)
 
                 # Generate the text for the filtered buy signal stock to send via telegram
                 tot_buy_signals += 1
@@ -93,7 +94,8 @@ class MacdStrategy(object):
         logger.info("Buy signals updated in watch list: %d/%d" % (tot_buy_signals, stocks_count))
 
     def sell_signals(self):
-        stocks = StockHistory.objects.select_related('stock').filter(watch_list=True, is_filtered=False).order_by(
+        existing_orders = StockOrder.objects.filter(status=StockOrder.BOUGHT).values_list('stock_history_id', flat=True)
+        stocks = StockHistory.objects.select_related('stock').filter(stock_id__in=existing_orders).order_by(
             'stock__symbol')
         stocks_count = stocks.count()
         if stocks_count == 0:
@@ -117,9 +119,10 @@ class MacdStrategy(object):
                 text += '{0}.\t{1}\t{2}\tRs.{3}\t{4:.2f}%\n'.format(total_sell_signals, stock.trade_date,
                                                                     stock.stock.symbol, stock_history_obj.close,
                                                                     profit)
-                stock.comments = 'SOLD @ {0}  {1:.2f}%'.format(stock_history_obj.close, profit)
-                stock.is_filtered = True
-                stock.save(update_fields=['comments', 'is_filtered'])
+                stock_order = StockOrder.objects.get(stock_history_id=stock.id)
+                stock_order.sold_at = self.today
+                stock_order.sold_price = stock_history_obj.close
+                stock_order.save()
         if total_sell_signals > 0:
             send_via_telegram(text)
         logger.info("Sell signals updated in watch list: %d/%d" % (total_sell_signals, stocks_count))
