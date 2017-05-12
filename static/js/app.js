@@ -57,18 +57,23 @@ function renderStockDetails(data) {
     var avgLastPrice = 0;
     $.each(data['data'], function (index, value) {
         var lastPrice = value['lastPrice'].replace(',', '');
-        var symbol = value['symbol'];
-        $("." + symbol + '-current-price').text(lastPrice);
+        var symbol = value['symbol'].replace('&amp;', '&');
+        var stockId = $('[data-symbol="' + symbol + '"]').data('stockId');
+        var uiStockID = 'stk-' + stockId;
+        // $("" + symbol + '-current-price').text(lastPrice);
+
+        // Add Current market price
+        $('[data-cmp="' + uiStockID + '"]').text(lastPrice);
 
         // Add company name
-        $('td[data-company-id=' + symbol + ']').text(value['companyName']);
+        $('td[data-company-id="' + symbol + '"]').text(value['companyName']);
 
-        var todayChangeSpan = $('.' + symbol + '-today-change'),
-            todayChangePrice = parseFloat(value.change);
-        todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
-        changePriceColor(todayChangePrice, todayChangeSpan);
-        var overallGainDiv = $("." + symbol + '-overall-gain');
-        var avgClosePrice = toFloat(overallGainDiv.attr('data-close'));
+        var $todayChangeSpan = $('[data-today-change="' + uiStockID + '"]');
+        var todayChangePrice = parseFloat(value.change);
+        $todayChangeSpan.text(todayChangePrice + ' (' + value['pChange'] + '%)');
+        changePriceColor(todayChangePrice, $todayChangeSpan);
+        var overallGainDiv = $('[data-overall-gain="' + uiStockID + '"]');
+        var avgClosePrice = toFloat(overallGainDiv.data('close'));
         var overallGainPrice = toFloat(lastPrice - avgClosePrice);
         var overallGainPercent = toFloat(overallGainPrice / (avgClosePrice / 100));
         avgLastPrice += toFloat(lastPrice);
@@ -76,9 +81,9 @@ function renderStockDetails(data) {
         totalStockClosePrice += avgClosePrice;
 
         var predictedPrice = getTargetStopLoss(avgClosePrice);
-        $('.' + symbol + '-trg-price').text(predictedPrice.target);
-        $('.' + symbol + '-stop-loss-price').text(predictedPrice.stopLoss);
-        $('.' + symbol + '-overall-gain-percent').text('(' + overallGainPercent + '%)');
+        $('[data-trg-price="' + uiStockID + '"]').text(predictedPrice.target);
+        $('[data-stop-loss="' + uiStockID + '"]').text(predictedPrice.stopLoss);
+        $('[data-overall-gain-percent="' + uiStockID + '"]').text('(' + overallGainPercent + '%)');
         overallGainDiv.text(overallGainPrice);
         changePriceColor(overallGainPrice, overallGainDiv);
     });

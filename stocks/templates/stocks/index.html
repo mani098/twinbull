@@ -40,19 +40,19 @@
                                     target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a>
                             </div>
                         </td>
-                        <td class="avg-price">{{ i.close }}</td>
+                        <td class="avg-price">{{ s.stock_history.close }}</td>
                         <td>
                             <div class="ltp-gn" data-cmp="stk-{{ stock_id }}"></div>
                             <span class="today-change" data-today-change="stk-{{ stock_id }}"></span></td>
                         <td>
                             <div class="ovl-gn"
                                  data-close="{{ s.stock_history.close }}"
-                                 data-overal-gain="stk-{{ stock_id }}"></div>
-                            <div class="{{ stock_symbol }}-overall-gain-percent addFadeColor"></div>
+                                 data-overall-gain="stk-{{ stock_id }}"></div>
+                            <div class="addFadeColor" data-overall-gain-percent="stk-{{ stock_id }}"></div>
                         </td>
                         <td>
                             <span class="trg-price" data-trg-price="stk-{{ stock_id }}"></span> /
-                            <span class="stop-loss-price" data-stop-loss="stk={{ stock_id }}"></span>
+                            <span class="stop-loss-price" data-stop-loss="stk-{{ stock_id }}"></span>
                         </td>
                         <td>
                             <div class="timeago">{{ s.stock_history.trade_date }}</div>
