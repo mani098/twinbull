@@ -23,41 +23,42 @@
                 <th class="tbl-heading" style="width: 100px">Overall Gain</th>
                 <th class="tbl-heading">Target / StopLoss</th>
                 <th class="tbl-heading" style="width: 150px">Trade date</th>
-                <th class="tbl-heading">Comments</th>
             </tr>
             </thead>
             <tbody>
-            {% for i in stocks %}
-                <tr>
-                    <td class="org-name" data-company-id="{{ i.stock.symbol }}"></td>
-                    <td>
-                        <div class="symbol"
-                             data-symbol="{{ i.stock.symbol }}" data-stock-id="{{ i.stock.id }}"
-                             data-tradedate="{{ i.trade_date }}">{{ i.stock.symbol }}
-                        </div>
-                        <div class="addFadeColor"><a
-                                href="{{ i.stock.moneycontrol_link }}"
-                                target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a></div>
-                    </td>
-                    <td class="avg-price">{{ i.close }}</td>
-                    <td>
-                        <div class="{{ i.stock.symbol }}-current-price ltp-gn"></div>
-                        <span class="{{ i.stock.symbol }}-today-change today-change"></span></td>
-                    <td>
-                        <div class="{{ i.stock.symbol }}-overall-gain ovl-gn" data-close="{{ i.close }}"></div>
-                        <div class="{{ i.stock.symbol }}-overall-gain-percent addFadeColor"></div>
-                    </td>
-                    <td>
-                        <span class="{{ i.stock.symbol }}-trg-price trg-price"></span> /
-                        <span class="{{ i.stock.symbol }}-stop-loss-price stop-loss-price"></span>
-                    </td>
-                    <td>
-                        <div class="timeago">{{ i.trade_date }}</div>
-                    </td>
-                    <td>{{ i.comments }}</td>
-                    <td><span class="glyphicon glyphicon-remove remove-btn" data-row-id="{{ i.id }}"></span></td>
-
-                </tr>
+            {% for s in stocks %}
+                {% with stock_symbol=s.stock_history.stock.symbol  stock_id=s.stock_history.stock.id %}
+                    <tr>
+                        <td class="org-name" data-company-id="{{ stock_symbol }}"></td>
+                        <td>
+                            <div class="symbol"
+                                 data-symbol="{{ stock_symbol }}" data-stock-id="{{ stock_id }}"
+                                 data-tradedate="{{ s.stock_history.trade_date }}">{{ stock_symbol }}
+                            </div>
+                            <div class="addFadeColor"><a
+                                    href="{{ s.stock_history.stock.moneycontrol_link }}"
+                                    target="_blank"><span class="glyphicon glyphicon-link"></span> MoneyControl</a>
+                            </div>
+                        </td>
+                        <td class="avg-price">{{ i.close }}</td>
+                        <td>
+                            <div class="ltp-gn" data-cmp="stk-{{ stock_id }}"></div>
+                            <span class="today-change" data-today-change="stk-{{ stock_id }}"></span></td>
+                        <td>
+                            <div class="ovl-gn"
+                                 data-close="{{ s.stock_history.close }}"
+                                 data-overal-gain="stk-{{ stock_id }}"></div>
+                            <div class="{{ stock_symbol }}-overall-gain-percent addFadeColor"></div>
+                        </td>
+                        <td>
+                            <span class="trg-price" data-trg-price="stk-{{ stock_id }}"></span> /
+                            <span class="stop-loss-price" data-stop-loss="stk={{ stock_id }}"></span>
+                        </td>
+                        <td>
+                            <div class="timeago">{{ s.stock_history.trade_date }}</div>
+                        </td>
+                    </tr>
+                {% endwith %}
             {% endfor %}
             </tbody>
         </table>

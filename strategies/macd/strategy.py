@@ -15,7 +15,7 @@ class MacdStrategy(object):
 
     def __init__(self):
         # self.today = date.today()
-        self.today = date(2017, 4, 26)
+        self.today = date(2017, 5, 4)
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
@@ -42,9 +42,6 @@ class MacdStrategy(object):
 
         is_valid_quarter = True
         for price in list(quarter_prices):
-            # if stock_obj.stock.symbol == 'TATAMTRDVR':
-            #     import ipdb;
-            #     ipdb.set_trace()
             if stock_obj.close < price:
                 # If current price is lesser than the quarter initial price then it's not a valid buy
                 is_valid_quarter = False

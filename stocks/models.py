@@ -43,12 +43,10 @@ class StockHistoryManager(models.Manager):
 
         if stocks_history:
             StockHistory.objects.bulk_create(stocks_history)
-            print ("Stocks downloaded for %s" % by_trade_date)
+            logger.info("Stocks downloaded for %s" % by_trade_date)
         else:
             # for cron logs
-            print ("[%s] No data found on NSE" % datetime.now())
-
-            logger.info("No data found on NSE")
+            logger.info("[%s] No data found on NSE" % datetime.now())
 
 
 class StockHistory(models.Model):
@@ -64,10 +62,6 @@ class StockHistory(models.Model):
     total_traded_qty = models.IntegerField(verbose_name="Total Traded quantity")
     total_traded_value = models.FloatField(verbose_name="Total Traded value")
     total_trades = models.IntegerField(verbose_name="Total Trades")
-    deliverables = models.FloatField(null=True, blank=True)
-    watch_list = models.BooleanField(default=False)
-    is_filtered = models.BooleanField(default=False)
-    comments = models.CharField(max_length=1000)
 
     def __str__(self):
         return '%d - %s' % (self.id, self.stock.symbol)
@@ -76,3 +70,17 @@ class StockHistory(models.Model):
 
     class Meta:
         ordering = ('trade_date',)
+
+
+class StockOrder(models.Model):
+    order_choices = ((1, 'BOUGHT'),
+                     (2, 'SOLD'))
+
+    stock_history = models.ForeignKey(StockHistory, db_index=True)
+    status = models.PositiveSmallIntegerField(choices=order_choices, default=1)
+    sold_at = models.DateTimeField(verbose_name='Sold at', db_index=True, null=True)
+    sold_price = models.FloatField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return 'Order ID: %d - Stock: %s' % (self.id, self.stock_history.stock.symbol)

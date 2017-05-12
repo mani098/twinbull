@@ -30,22 +30,6 @@ $('span.add-btn').click(function () {
 
 });
 
-
-$('.remove-btn').click(function () {
-    var rowId = this.dataset.rowId;
-    $(this).parents('tr').remove();
-    $.ajax({
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        url: '/api/watchlist/remove/',
-        data: JSON.stringify({row_id: rowId}),
-        error: function () {
-            alert("Some error occurred")
-        }
-    });
-});
-
 function updateStockPrice() {
     var stock_ids = '';
     $.each($('div.symbol'), function (index, value) {
