@@ -18,7 +18,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
-	url(r'^', include('stocks.urls')),
-	url(r'^admin/', admin.site.urls),
-	url(r'^api/stocks/', include('stocks.apis.urls', namespace='stocks-api')),
+    url(r'^', include('stocks.urls')),
+    url(r'^admin/', admin.site.urls),
 ]

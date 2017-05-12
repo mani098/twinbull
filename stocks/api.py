@@ -1,14 +1,11 @@
-import json
-from datetime import date, timedelta
-from dateutil import parser
 from urllib import parse as url_parse
-from django.http.response import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-from stocks.models import StockHistory, Stock
-from django.conf import settings
 
 import requests
+from django.conf import settings
+from django.http.response import JsonResponse
+
+from stocks.models import Stock
+
 
 def list_symbols(request):
     symbols = list(Stock.objects.all().values_list('symbol', flat=True))

@@ -1,7 +1,8 @@
-import requests
-from urllib.parse import quote_plus
-from django.conf import settings
 from datetime import date as python_date
+from urllib.parse import quote_plus
+
+import requests
+from django.conf import settings
 
 
 def calculate_charges(stock_price=0, quantity=0):

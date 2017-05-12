@@ -1,10 +1,11 @@
 import logging
 from datetime import date, timedelta
 
+from django.db.models import F
+
 from stocks.models import StockHistory, StockOrder
 from utils.util import send_via_telegram, get_quarter_month
 from .macd import Macd
-from django.db.models import F
 
 logger = logging.getLogger(__name__)
 

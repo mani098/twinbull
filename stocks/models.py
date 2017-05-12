@@ -38,8 +38,7 @@ class StockHistoryManager(models.Manager):
                                              open=stock['OPEN'], high=stock['HIGH'], low=stock['LOW'],
                                              close=stock['CLOSE'], last=stock['LAST'], prev_close=stock['PREVCLOSE'],
                                              total_traded_qty=stock['TOTTRDQTY'], total_traded_value=stock['TOTTRDVAL'],
-                                             trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES'],
-                                             deliverables=stock['DELIVERABLES'], is_filtered=stock['is_filtered']))
+                                             trade_date=stock['TRADEDDATE'], total_trades=stock['TOTALTRADES']))
 
         if stocks_history:
             StockHistory.objects.bulk_create(stocks_history)
