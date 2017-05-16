@@ -3,6 +3,8 @@ from urllib.parse import quote_plus
 
 import requests
 from django.conf import settings
+from urllib import parse as url_parse
+from django.conf import settings
 
 
 def calculate_charges(stock_price=0, quantity=0):
@@ -45,7 +47,10 @@ class NiftyStocks(object):
     def __init__(self):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-            'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm'}
+            'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Connection': 'keep-alive',
+            'Accept-Encoding': 'gzip, deflate, sdch, br'}
 
     def _get_from_source(self, url):
         data = requests.get(url, headers=self.headers)
@@ -58,6 +63,22 @@ class NiftyStocks(object):
     def next_nifty(self):
         next_nifty_url = settings.NEXT_NIFTY_URL
         return self._get_from_source(next_nifty_url)
+
+
+class NseHelper(object):
+    def __init__(self):
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+            'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm'}
+
+    def stock_quotes(self, symbols):
+        quotes_url = settings.STOCK_QUOTE_URL
+        results = []
+        for x in range(0, len(symbols), 5):
+            symbols_str = ','.join(map(lambda i: url_parse.quote(i), symbols[x:x + 5]))
+            data = requests.get(quotes_url + '?symbol=' + symbols_str, headers=self.headers).json()['data']
+            results.extend(data)
+        return results
 
 
 def get_quarter_month(date):
