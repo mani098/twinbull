@@ -3,6 +3,7 @@ from django.core.management import BaseCommand
 from stocks.models import StockOrder
 from utils.util import NseHelper
 from utils.util import send_via_telegram
+from time import sleep
 
 
 class Command(BaseCommand):
@@ -29,7 +30,7 @@ class Command(BaseCommand):
         for stock in stock_quotes:
             stock_symbol = stock['symbol'].replace('&amp;', '&')
             stock_order = StockOrder.objects.select_related('stock_history__stock', 'stock_history'). \
-                get(stock_history__stock__symbol=stock_symbol)
+                filter(stock_history__stock__symbol=stock_symbol).last()
 
             avg_price = float(stock['averagePrice'].replace(',', ''))
             bought_price = stock_order.stock_history.close
@@ -45,4 +46,6 @@ class Command(BaseCommand):
                 send_via_telegram(text)
 
     def handle(self, *args, **options):
-        self._trigger_monitor()
+        while True:
+            self._trigger_monitor()
+            sleep(60*5)

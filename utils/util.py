@@ -69,7 +69,10 @@ class NseHelper(object):
     def __init__(self):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-            'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm'}
+            'Referer': 'https://www.nseindia.com/live_market/dynaContent/live_watch/equities_stock_watch.htm',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Connection': 'keep-alive',
+            'Accept-Encoding': 'gzip, deflate, sdch, br'}
 
     def stock_quotes(self, symbols):
         quotes_url = settings.STOCK_QUOTE_URL
