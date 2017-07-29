@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 from django.db.models import F
 
-from stocks.models import StockHistory, StockOrder
+from stocks.models import StockHistory, StockOrder, Stock
 from utils.util import send_via_telegram, get_quarter_month
 from .macd import Macd
 
@@ -14,9 +14,8 @@ class MacdStrategy(object):
     """Don't run this strategy during the first 5 trading days of quarter,
      if we try to run at this time then eventually the results would be wrong"""
 
-    def __init__(self):
-        # self.today = date.today()
-        self.today = date(2017, 5, 17)
+    def __init__(self, trigger_date=date.today()):
+        self.today = trigger_date
 
     def get_signals(self, signal_type):
         """Get signals by `buy` or `sell` """
@@ -51,14 +50,24 @@ class MacdStrategy(object):
         # prev_histogram should be < 0 and curr_histogram should be >=0 to identify the up-trend
         return is_valid_quarter and is_valid_histogram
 
+    def pre_filter_buy_stocks(self):
+        existing_orders = StockOrder.objects.filter(status=StockOrder.BOUGHT).values_list('stock_history_id', flat=True)
+
+        # stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=300000,
+        #                                                              close__gte=21). \
+        #     annotate(day_change_percent=(100 / F('open') * (F('close') - F('open')))).filter(day_change_percent__lt=5,
+        #                                                                                      day_change_percent__gt=0). \
+        #     exclude(stock__symbol='LIQUIDBEES', id__in=existing_orders)
+
+        stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today,
+                                                                     stock__broad_market_indices=Stock.NIFTY_50)
+        return stocks
+
     def buy_signals(self):
         """Filter stocks which are eligible for buy and send the signal via telegram"""
-        existing_orders = StockOrder.objects.filter(status=StockOrder.BOUGHT).values_list('stock_history_id', flat=True)
-        stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today, total_traded_qty__gt=300000,
-                                                                     close__gte=21). \
-            annotate(day_change_percent=(100 / F('open') * (F('close') - F('open')))).filter(day_change_percent__lt=5,
-                                                                                             day_change_percent__gt=0). \
-            exclude(stock__symbol='LIQUIDBEES', id__in=existing_orders)
+
+        stocks = self.pre_filter_buy_stocks()
+
         stocks_count = stocks.count()
 
         if stocks_count == 0:

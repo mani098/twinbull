@@ -9,12 +9,20 @@ logger = logging.getLogger(__name__)
 
 
 class Stock(models.Model):
+    NIFTY_50 = 0
+    NIFTY_NEXT_50 = 1
+    NIFTY_MIDCAP = 2
+    NIFTY_CHOICES = ((NIFTY_50, 'Nifty 50'),
+                     (NIFTY_NEXT_50, 'Nifty Next 50'),
+                     (NIFTY_MIDCAP, 'Nifty Midcap'))
+
     symbol = models.CharField(max_length=100, verbose_name="Symbol", db_index=True)
     isin = models.CharField(max_length=30, verbose_name="ISIN")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Stock created at")
     moneycontrol_link = models.TextField(verbose_name='MoneyControl.com', null=True, default=None, blank=True)
     moneycontrol_stock_id = models.CharField(verbose_name='Moneycontrol stock id', null=True, blank=True, default=None,
                                              max_length=100)
+    broad_market_indices = models.PositiveSmallIntegerField(choices=NIFTY_CHOICES, null=True, blank=True)
 
     def __str__(self):
         return self.symbol

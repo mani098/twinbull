@@ -32,14 +32,14 @@ def calculate_charges(stock_price=0, quantity=0):
 def send_via_telegram(text):
     """Send message via telegram bot"""
     base_url = settings.TELEGRAM_BASE_URL
-    # kaathi_id = settings.KAATHI_TELEGRAM_ID
+    kaathi_id = settings.KAATHI_TELEGRAM_ID
     mani_id = settings.MANI_TELEGRAM_ID
 
     text_encode = quote_plus(text)
-    # url_kaathi = base_url + kaathi_id + "&text=" + text_encode
+    url_kaathi = base_url + kaathi_id + "&text=" + text_encode
     url_mani = base_url + mani_id + "&text=" + text_encode
 
-    # resp_kaathi = requests.get(url=url_kaathi)
+    resp_kaathi = requests.get(url=url_kaathi)
     resp_mani = requests.get(url=url_mani)
 
 
@@ -56,13 +56,15 @@ class NiftyStocks(object):
         data = requests.get(url, headers=self.headers)
         return data.json()
 
-    def nifty(self):
+    @classmethod
+    def nifty(cls):
         nifty_url = settings.NIFTY_URL
-        return self._get_from_source(nifty_url)
+        return cls()._get_from_source(nifty_url)
 
-    def next_nifty(self):
+    @classmethod
+    def next_nifty(cls):
         next_nifty_url = settings.NEXT_NIFTY_URL
-        return self._get_from_source(next_nifty_url)
+        return cls()._get_from_source(next_nifty_url)
 
 
 class NseHelper(object):

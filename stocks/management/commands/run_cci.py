@@ -1,6 +1,5 @@
 from django.core.management import BaseCommand
-from strategies.macd import MacdStrategy
-from datetime import date
+from strategies.cci.strategy import CciStrategy
 
 
 class Command(BaseCommand):
@@ -9,6 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         signal = options['signal'][0]
-        # trigger_date = date(2017, 7, i)
-        # MacdStrategy(trigger_date=trigger_date).get_signals(signal_type=signal)
-        MacdStrategy().get_signals(signal_type=signal)
+        return CciStrategy().get_signals(signal_type=signal)
