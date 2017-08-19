@@ -60,7 +60,8 @@ class MacdStrategy(object):
         #     exclude(stock__symbol='LIQUIDBEES', id__in=existing_orders)
 
         stocks = StockHistory.objects.select_related('stock').filter(trade_date=self.today,
-                                                                     stock__broad_market_indices=Stock.NIFTY_50)
+                                                                     stock__broad_market_indices=Stock.NIFTY_50). \
+            exclude(id__in=existing_orders)
         return stocks
 
     def buy_signals(self):
